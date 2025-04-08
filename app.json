@@ -36,6 +36,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "5bdfc9d2-5b2e-4f98-bf77-e6505048641b"
+      }
+    },
+    "owner": "linbingcheng"
   }
 }
