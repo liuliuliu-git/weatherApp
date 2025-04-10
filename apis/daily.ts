@@ -1,7 +1,7 @@
 import { request } from '@/utils/request';
 import { ResType,WeatherLocation} from "@/apis/shared";
 
-// 定义每日天气信息类型
+// 每日天气信息类型
 export type DailyWeather = {
     date: string; // 日期
     text_day: string; // 白天天气描述
@@ -19,14 +19,14 @@ export type DailyWeather = {
     humidity: string; // 湿度
 };
 
-// 定义每日天气数据返回类型
+// 每日天气数据返回类型
 export type WeatherDailyData = {
     location: WeatherLocation; // 地理位置信息
     daily: DailyWeather[]; // 每日天气列表
     last_update: string; // 最后更新时间
 };
 
-// 定义返回数据类型
+// 返回数据类型
 export type WeatherDailyResType = WeatherDailyData[];
 
 // 获取每日天气信息的请求函数
