@@ -1,4 +1,4 @@
-// global.d.ts 或 types.d.ts
+
 declare module '*.png' {
     const content: string;
     export default content;
@@ -18,3 +18,8 @@ declare module '*.svg' {
     const content: string;
     export default content;
 }
+
+// declare module '@/assets/*' {
+//     const value: any;
+//     export default value;
+// }
