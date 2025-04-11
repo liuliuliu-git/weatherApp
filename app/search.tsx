@@ -2,19 +2,29 @@ import {View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet} from "rea
 import {useEffect, useState} from "react";
 import {searchCity, LocationSearchItem} from "@/apis/location";
 import {useLocationStore} from "@/stores/useLocationStore";
+import {useRouter} from "expo-router";
 
 
 export default function Search() {
-    const { setLocation } = useLocationStore();
+    const {setLocation} = useLocationStore();
     const [query, setQuery] = useState(""); // 输入框内容
     const [results, setResults] = useState<LocationSearchItem[]>([]); // 搜索结果
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
     // 监听输入变化，节流调用接口（简化处理，生产可用 useDebounce）
     useEffect(() => {
         if (query.trim() === "") {
             setResults([]);
             return;
+        }
+        const regex = /^[A-Za-z]+$/;
+        if (regex.test(query)) {
+            if(query.length < 2){
+                setResults([]);
+                return
+            }
+
         }
         const timeout = setTimeout(() => {
             fetchCityResults();
@@ -33,7 +43,7 @@ export default function Search() {
             let resFilter = data.results.filter((item) => {
                 return item.country === "CN";
             })
-            console.log(resFilter)
+            // console.log(resFilter)
             setResults(resFilter || []);
         } catch (e) {
             console.error("城市搜索失败：", e);
@@ -43,8 +53,10 @@ export default function Search() {
     };
 
     const handleSelect = (item: LocationSearchItem) => {
-        setLocation(item);  // 保存到全局
-        console.log("你选择了城市：", item);
+        setLocation(item);
+        // console.log("你选择了城市：", item);
+        router.replace('/')
+
     };
     const renderItem = (item: LocationSearchItem) => {
         return <TouchableOpacity style={styles.item} onPress={() => handleSelect(item)}>
@@ -66,7 +78,7 @@ export default function Search() {
                 showsVerticalScrollIndicator={false}
                 data={results}
                 keyExtractor={(item) => item.id}
-                renderItem={({item})=>renderItem(item)}
+                renderItem={({item}) => renderItem(item)}
                 ListEmptyComponent={!loading && query !== "" ? <Text style={styles.empty}>未找到相关城市</Text> : null}
             />
         </View>

@@ -1,4 +1,6 @@
 import axios from 'axios'
+import Toast from 'react-native-toast-message';
+
 
 const request = axios.create({
     baseURL: 'https://api.seniverse.com/v3',
@@ -26,16 +28,10 @@ request.interceptors.response.use((response) => {
     // 超出 2xx 范围的状态码都会触发该函数。
     // 对响应错误做点什么
     console.dir(error)
-    // if (error.response.status === 401) {
-    //     // 防止store重复调用
-    //     const {store} = await import('@/store')
-    //     // 1. 清空 Redux 里的用户信息
-    //     store.dispatch(clearUserInfo());
-    //     // 2. 跳转到登录页
-    //     await router.navigate('/login');
-    //     // 3. 刷新页面（可选，确保状态同步）
-    //     window.location.reload();
-    // }
+
+
+
+
     return Promise.reject(error)
 })
 

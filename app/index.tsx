@@ -23,15 +23,19 @@ import {DailyWeather, getWeatherDaily} from "@/apis/daily";
 import {Inter_500Medium, useFonts} from "@expo-google-fonts/inter";
 import {ColorScheme, Theme} from "@/types";
 import {SafeAreaView} from "react-native-safe-area-context";
+import {useLocationStore} from "@/stores/useLocationStore";
+import {handleAxiosError} from "@/utils/handleAxiosError";
+
+
 
 export default function Index() {
+    const {location} = useLocationStore();
     const {colorScheme, theme} = useContext(ThemeContext);
     const styles = createStyles(theme, colorScheme);
     const [now, setNow] = useState<WeatherNow | null>(null);
     const [weatherCode, setWeatherCode] = useState<number>(0);
     const [recentWeather, setRecentWeather] = useState<DailyWeather[] | null>(null);
     const router = useRouter();
-    let icon = null
     // const params = {
     //     key: process.env.EXPO_PUBLIC_API_KEY,
     //     location: "泉州"
@@ -43,9 +47,10 @@ export default function Index() {
     useEffect(() => {
         async function fetchData() {
             try {
+                // console.log(location)
                 const {data} = await getWeatherNow({
                     key: process.env.EXPO_PUBLIC_API_KEY || "",
-                    location: '泉州',
+                    location: location?.name as string,
                 });
                 // console.log("res.data.results =", data.results);
                 if (data.results && data.results.length > 0) {
@@ -54,7 +59,8 @@ export default function Index() {
                 }
 
             } catch (error) {
-                console.error('Error fetching weather data:', error);
+                // console.error('Error fetching weather data:', error);
+                handleAxiosError(error);
             }
         }
 
@@ -66,13 +72,12 @@ export default function Index() {
             try {
                 const {data} = await getWeatherDaily({
                     key: process.env.EXPO_PUBLIC_API_KEY || "",
-                    location: '泉州',
+                    location: location?.name as string,
                 });
                 // console.log("res.data.results =", data.results[0].daily[0]);
                 setRecentWeather(data.results[0].daily);
-
             } catch (error) {
-                console.error('Error fetching weather data:', error);
+                // console.error('Error fetching weather data:', error);
             }
         }
 
@@ -83,7 +88,7 @@ export default function Index() {
     }
     const renderItem = ({item}: { item: DailyWeather }) => (
         <View style={styles.dailyWeatherItem}>
-            <Text style={styles.dateText}>{item.date.replace(/^[0-9]{4}-/, '')}</Text>
+            <Text style={styles.dateText}>{item.date.replace(/^[0-9]{4}-/, '').replace(/-/, '/')}</Text>
             <View style={styles.dailyWeatherRow}>
                 {/* 晨间天气 */}
                 <View style={styles.eachItem}>
@@ -134,7 +139,7 @@ export default function Index() {
                         }} style={{marginTop: 5}}>
                             <FontAwesome5 name="search-location" size={24} color={theme.text}/>
                         </TouchableOpacity>
-                        <Text style={styles.cityText}>泉州
+                        <Text style={styles.cityText}>{location?.name}
                             <Entypo name="location" size={24} color={theme.text} style={styles.locationIcon}/>
                         </Text>
                         <TouchableOpacity onPress={() => {

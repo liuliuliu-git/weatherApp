@@ -2,6 +2,7 @@ import {Stack} from "expo-router";
 import {SafeAreaProvider} from "react-native-safe-area-context";
 import {ThemeProvider} from "@/context/ThemeContext";
 import {StatusBar} from "expo-status-bar";
+import Toast from "react-native-toast-message";
 
 export default function RootLayout() {
     return <ThemeProvider>
@@ -38,7 +39,9 @@ export default function RootLayout() {
                 }}/>
                 {/* 404 页面 */}
                 <Stack.Screen name="+not-found"/>
+
             </Stack>
+            <Toast/>
         </SafeAreaProvider>
     </ThemeProvider>
 
