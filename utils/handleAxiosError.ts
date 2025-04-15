@@ -28,6 +28,7 @@ export const handleAxiosError = (error) => {
                     text1: '禁止访问',
                     text2: '您没有权限访问此资源',
                     position: "top",
+                    visibilityTime: 1500
                 });
                 break;
             case 404:

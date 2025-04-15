@@ -200,6 +200,9 @@ export default function Index() {
                     <FlatList horizontal data={recentWeather} renderItem={renderItem}
                               showsHorizontalScrollIndicator={false}
                               keyExtractor={(item) => item.date}></FlatList>
+                    <View>
+                        <View style={styles.lifeItem}></View>
+                    </View>
                     <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'}/>
                 </ScrollView>
 
@@ -342,6 +345,9 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
             justifyContent: "space-around",
             marginBottom: 10,
         },
-        mainContainer: {}
+        mainContainer: {},
+        lifeItem:{
+            flexDirection:"column",
+        }
     });
 }

@@ -37,8 +37,8 @@ export const getWeatherDaily = ({ key, location }: { key: string, location: stri
             location,
             language: 'zh-Hans',
             unit: 'c',
-            start: 0,
-            days: 3
+            start: -1,
+            days: 15
         }
     });
 };

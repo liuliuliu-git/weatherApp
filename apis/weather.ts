@@ -18,7 +18,9 @@ export const getWeatherNow = ({key, location}: { key: String, location: String }
     return request.get<ResType<weatherNowResType>>(`/weather/now.json`, {
         params: {
             key,
-            location
+            location,
+            // start:-1,
+            // days:15
         }
     });
 };
