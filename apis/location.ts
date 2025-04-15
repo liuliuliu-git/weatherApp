@@ -1,6 +1,6 @@
 // apis/location.ts
-import { request } from '@/utils/request';
-import { ResType } from '@/apis/shared';
+import {request} from '@/utils/request';
+import {ResType, WeatherParams} from '@/apis/shared';
 
 // 城市搜索返回项类型
 export type LocationSearchItem = {
@@ -12,17 +12,12 @@ export type LocationSearchItem = {
     timezone_offset: string;  // 时区偏移
 };
 
-// 城市搜索结果类型
-export type LocationSearchResType = {
-    results: LocationSearchItem[];
-};
-
 // 请求函数：根据关键字搜索城市
-export const searchCity = ({ key, location }: { key: string; location: string }) => {
-    return request.get<ResType<LocationSearchResType>>(`/location/search.json`, {
+export const searchCity = ({key, location}: WeatherParams) => {
+    return request.get<ResType<LocationSearchItem[]>>(`/location/search.json`, {
         params: {
             key,
-            q:location,
+            q: location,
             language: 'zh-Hans',
         },
     });

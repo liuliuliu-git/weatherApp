@@ -1,5 +1,5 @@
 import { request } from '@/utils/request';
-import { ResType, WeatherLocation } from "@/apis/shared";
+import {ResType, Location, WeatherParams} from "@/apis/shared";
 
 // 单项生活建议类型
 export type Suggestion = {
@@ -39,17 +39,14 @@ export type SuggestionItem = {
 };
 // 生活建议类型
 export type LifeSuggestion = {
-    location: WeatherLocation;
+    location: Location;
     suggestion: SuggestionItem[];
     last_update: string;
 };
 
-// 返回的数据类型
-export type LifeSuggestionResType = LifeSuggestion[];
-
 // 获取生活建议信息的请求函数
-export const getLifeSuggestion = ({ key, location }: { key: string, location: string }) => {
-    return request.get<ResType<LifeSuggestionResType>>(`/life/suggestion.json`, {
+export const getLifeSuggestion = ({ key, location }: WeatherParams) => {
+    return request.get<ResType<LifeSuggestion[]>>(`/life/suggestion.json`, {
         params: {
             key,
             location,

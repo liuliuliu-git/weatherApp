@@ -1,5 +1,5 @@
 import { request } from '@/utils/request';
-import { ResType,WeatherLocation} from "@/apis/shared";
+import { ResType,Location} from "@/apis/shared";
 
 // 每日天气信息类型
 export type DailyWeather = {
@@ -21,17 +21,13 @@ export type DailyWeather = {
 
 // 每日天气数据返回类型
 export type WeatherDailyData = {
-    location: WeatherLocation; // 地理位置信息
+    location: Location; // 地理位置信息
     daily: DailyWeather[]; // 每日天气列表
     last_update: string; // 最后更新时间
 };
-
-// 返回数据类型
-export type WeatherDailyResType = WeatherDailyData[];
-
 // 获取每日天气信息的请求函数
 export const getWeatherDaily = ({ key, location }: { key: string, location: string }) => {
-    return request.get<ResType<WeatherDailyResType>>(`/weather/daily.json`, {
+    return request.get<ResType<WeatherDailyData[]>>(`/weather/daily.json`, {
         params: {
             key,
             location,

@@ -27,7 +27,6 @@ import {useLocationStore} from "@/stores/useLocationStore";
 import {handleAxiosError} from "@/utils/handleAxiosError";
 
 
-
 export default function Index() {
     const {location} = useLocationStore();
     const {colorScheme, theme} = useContext(ThemeContext);
@@ -184,25 +183,14 @@ export default function Index() {
 
                     </View>
 
-                    {/* 快捷入口 */}
-                    {/*<View style={styles.quickActions}>*/}
-                    {/*    <TouchableOpacity style={styles.actionButton}>*/}
-                    {/*        <MaterialIcons name="notifications-active" size={24} color="white"/>*/}
-                    {/*        <Text style={styles.buttonText}>提醒设置</Text>*/}
-                    {/*    </TouchableOpacity>*/}
-                    {/*    <TouchableOpacity style={styles.actionButton}>*/}
-                    {/*        <MaterialIcons name="more-horiz" size={24} color="white"/>*/}
-                    {/*        <Text style={styles.buttonText}>更多</Text>*/}
-                    {/*    </TouchableOpacity>*/}
-                    {/*</View>*/}
                     {/*三日内天气*/}
-
                     <FlatList horizontal data={recentWeather} renderItem={renderItem}
                               showsHorizontalScrollIndicator={false}
                               keyExtractor={(item) => item.date}></FlatList>
                     <View>
                         <View style={styles.lifeItem}></View>
                     </View>
+                    {/*日出日落*/}
                     <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'}/>
                 </ScrollView>
 
@@ -287,21 +275,11 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
             marginBottom: 6,
             fontFamily: "Inter_500Medium"
         },
-        quickActions: {
-            flexDirection: "row",
-            justifyContent: "space-around",
-            width: "80%",
-        },
         actionButton: {
             alignItems: "center",
             backgroundColor: "rgba(255, 255, 255, 0.2)",
             padding: 12,
             borderRadius: 12,
-        },
-        buttonText: {
-            color: theme.text,
-            marginTop: 6,
-            fontFamily: "Inter_500Medium"
         },
         weatherIcon: {
             width: 80,
@@ -346,8 +324,8 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
             marginBottom: 10,
         },
         mainContainer: {},
-        lifeItem:{
-            flexDirection:"column",
+        lifeItem: {
+            flexDirection: "column",
         }
     });
 }
