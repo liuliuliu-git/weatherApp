@@ -1,21 +1,18 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import Svg, {Circle, Path, G} from 'react-native-svg';
-import {FontAwesome5} from '@expo/vector-icons';
 
 type SunPathProps = {
     sunrise: string;   // e.g. "06:00"
     sunset: string;    // e.g. "18:00"
-}
+};
 
 export default function SunPath({sunrise, sunset}: SunPathProps) {
-
     const [currentTime, setCurrentTime] = useState(getCurrentTime());
 
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentTime(getCurrentTime());
-            console.log(currentTime)
         }, 60000); // 每分钟更新一次
         return () => clearInterval(interval);
     }, []);
@@ -34,10 +31,6 @@ export default function SunPath({sunrise, sunset}: SunPathProps) {
     }
 
 
-    const radius = 100;
-    const cx = radius + 10;
-    const cy = radius + 10;
-
     // 将时间转为角度
     const timeToAngle = (time: string) => {
         const [h, m] = time.split(':').map(Number);
@@ -51,22 +44,35 @@ export default function SunPath({sunrise, sunset}: SunPathProps) {
     };
 
     const angle = timeToAngle(currentTime);
+
+    // 椭圆的水平半径和垂直半径
+    const radius = 33;
+    const ry = radius; // 垂直半径
+    const rx = ry * Math.sqrt(8); // 水平半径
+    const cx = rx + 10;
+    const cy = ry + 10;
     const rad = (angle * Math.PI) / 180;
-    const x = cx - radius * Math.cos(rad);
-    const y = cy - radius * Math.sin(rad);
+    const x = cx - rx * Math.cos(rad);
+    const y = cy - ry * Math.sin(rad);
+    const startX = cx - rx;
+    const endX = cx + rx;
+
+    // 控制点：决定“鼓”的程度
+    const controlY = cy - ry * 1.5;
+    const d = ` M${startX},${cy}
+          C${cx - rx / 2},${controlY} ${cx + rx / 2},${controlY} ${endX},${cy}`;
 
     return (
         <View style={styles.container}>
-            <Svg width={2 * (radius + 10)} height={radius + 30}>
+            <Svg width={2 * (rx + 10)} height={ry + 25} style={styles.svg}>
                 <G>
-                    {/* 半圆轨迹 */}
+                    {/*橄榄球轨迹 */}
                     <Path
-                        d={`M${cx - radius},${cy} A${radius},${radius} 0 0,1 ${cx + radius},${cy}`}
+                        d={d}
                         stroke="#FDB813"
                         strokeWidth={4}
                         fill="none"
                     />
-
                     {/* 当前太阳位置 */}
                     <Circle cx={x} cy={y} r={8} fill="#FDB813"/>
                 </G>
@@ -74,30 +80,35 @@ export default function SunPath({sunrise, sunset}: SunPathProps) {
 
             {/* 时间标签 */}
             <View style={styles.labels}>
-                <Text>{sunrise}</Text>
-                <FontAwesome5 name="sun" size={20} color="#FDB813"/>
-                <Text>{sunset}</Text>
+                <View>
+                    <Text>日出</Text>
+                    <Text>{sunrise}</Text>
+                </View>
+                <View>
+                    <Text>日落</Text>
+                    <Text>{sunset}</Text>
+                </View>
             </View>
-
-            <Text style={styles.time}>当前时间：{currentTime}</Text>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
+        flexDirection: 'column',
         alignItems: 'center',
-        marginTop: 30,
+        marginTop: 20,
+        backgroundColor: "rgba(255, 255, 255, 0.2)",
+        justifyContent: "space-evenly",
+        marginHorizontal: 20,
+        borderRadius: 12,
+    },
+    svg: {
+        marginTop: 10
     },
     labels: {
         width: 220,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop: 5,
-    },
-    time: {
-        marginTop: 8,
-        fontSize: 14,
-        color: '#555',
     },
 });
