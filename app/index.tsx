@@ -25,7 +25,8 @@ import {ColorScheme, Theme} from "@/types";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {useLocationStore} from "@/stores/useLocationStore";
 import {handleAxiosError} from "@/utils/handleAxiosError";
-
+import SunPath from "@/app/component/SunPath";
+import {getSunData, SunItem} from "@/apis/geo/sun";
 
 export default function Index() {
     const {location} = useLocationStore();
@@ -34,6 +35,7 @@ export default function Index() {
     const [now, setNow] = useState<WeatherNow | null>(null);
     const [weatherCode, setWeatherCode] = useState<number>(0);
     const [recentWeather, setRecentWeather] = useState<DailyWeather[] | null>(null);
+    const [sunData, setSunData] = useState<SunItem | null>(null);
     const router = useRouter();
     // const params = {
     //     key: process.env.EXPO_PUBLIC_API_KEY,
@@ -49,16 +51,14 @@ export default function Index() {
                 // console.log(location)
                 const {data} = await getWeatherNow({
                     key: process.env.EXPO_PUBLIC_API_KEY || "",
-                    location: location?.name as string,
+                    location: location?.id as string,
                 });
-                // console.log("res.data.results =", data.results);
                 if (data.results && data.results.length > 0) {
                     setNow(data.results[0].now); // 更新状态为当前天气数据
                     setWeatherCode(parseInt(data.results[0].now.code));
                 }
 
             } catch (error) {
-                // console.error('Error fetching weather data:', error);
                 handleAxiosError(error);
             }
         }
@@ -71,12 +71,27 @@ export default function Index() {
             try {
                 const {data} = await getWeatherDaily({
                     key: process.env.EXPO_PUBLIC_API_KEY || "",
-                    location: location?.name as string,
+                    location: location?.id as string,
                 });
-                // console.log("res.data.results =", data.results[0].daily[0]);
                 setRecentWeather(data.results[0].daily);
             } catch (error) {
-                // console.error('Error fetching weather data:', error);
+                handleAxiosError(error);
+            }
+        }
+
+        fetchData();
+    }, []);
+    // 日出日落
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const {data} = await getSunData({
+                    key: process.env.EXPO_PUBLIC_API_KEY || "",
+                    location: location?.id as string,
+                });
+                setSunData(data.results[0].sun[0]);
+            } catch (error) {
+                handleAxiosError(error);
             }
         }
 
@@ -191,6 +206,7 @@ export default function Index() {
                         <View style={styles.lifeItem}></View>
                     </View>
                     {/*日出日落*/}
+                    <SunPath sunrise={sunData?.sunrise as string} sunset={sunData?.sunset as string}/>
                     <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'}/>
                 </ScrollView>
 
