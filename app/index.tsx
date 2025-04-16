@@ -166,15 +166,28 @@ export default function Index() {
                     </View>
 
                 </View>
-                <ScrollView style={styles.mainContainer} showsVerticalScrollIndicator={false}>
+                <ScrollView showsVerticalScrollIndicator={false}>
                     {/* 当前天气 */}
-                    <View style={styles.weatherMain}>
-                        <Image
-                            source={{uri: getWeatherIconUri(weatherCode, colorScheme)}}
-                            style={styles.weatherIcon}
-                        />
-                        <Text style={styles.tempText}>{now?.temperature}°C</Text>
-                        <Text style={styles.weatherText}>{now?.text}</Text>
+                    <View style={[styles.weatherMain, styles.weatherMainContainer]}>
+                        <View style={styles.weatherMainHead}>
+                            <Text style={styles.tempText}>{now?.temperature}</Text>
+                            <View style={styles.weatherMainHeadRight}>
+                                <Text style={styles.celsiusText}>°C</Text>
+                                <View style={styles.feelsLikeContainer}>
+                                    <Text style={styles.weatherMainHeadRightText}>体感</Text>
+                                    <Text style={styles.weatherMainHeadRightText}> {now?.feels_like}°C</Text>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={styles.weatherTextContainer}>
+                            <Text style={styles.currentWeatherText}>{now?.text}</Text>
+                            {/*最低温度到最高温度*/}
+                            <View style={styles.tempRangeContainer}>
+                                <Text style={styles.tempRangeText}>{recentWeather?.[0]?.low}</Text>
+                                <Text style={styles.tempRangeText}> ~ </Text>
+                                <Text style={styles.tempRangeText}>{recentWeather?.[0]?.high}°C</Text>
+                            </View>
+                        </View>
                     </View>
 
                     {/* 天气详情 */}
@@ -261,8 +274,11 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
             alignItems: "center",
             marginBottom: 30,
         },
+        weatherMainContainer: {
+            marginTop: 20
+        },
         tempText: {
-            fontSize: 24,
+            fontSize: 90,
             color: theme.text,
             fontWeight: "bold",
             fontFamily: "Inter_500Medium"
@@ -279,9 +295,23 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
             marginBottom: 10,
             gap: 25
         },
+        detailsContainerWithBg: {
+            flexDirection: "row",
+            width: '100%',
+            justifyContent: 'space-evenly',
+            marginBottom: 10,
+            gap: 25,
+            backgroundColor: "rgba(255, 255, 255, 0.1)",
+            paddingVertical: 15,
+            borderRadius: 15,
+            marginHorizontal: 20
+        },
         detailItem: {
             flexDirection: "row",
             alignItems: "center",
+        },
+        detailIcon: {
+            marginRight: 8
         },
         detailText: {
             marginLeft: 15,
@@ -295,11 +325,6 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
             backgroundColor: "rgba(255, 255, 255, 0.2)",
             padding: 12,
             borderRadius: 12,
-        },
-        weatherIcon: {
-            width: 80,
-            height: 80,
-            borderRadius: 10,
         },
         dailyWeatherItem: {
             flexDirection: "column",
@@ -338,9 +363,49 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
             justifyContent: "space-around",
             marginBottom: 10,
         },
-        mainContainer: {},
         lifeItem: {
             flexDirection: "column",
+        },
+        weatherMainHead: {
+            flexDirection: "row",
+            alignItems: "center",
+        },
+        weatherMainHeadRight: {
+            flexDirection: "column",
+            justifyContent: "space-evenly",
+            height: 100,
+            marginLeft: 5
+        },
+        weatherMainHeadRightText: {
+            fontSize: 12,
+            color: theme.text,
+            fontFamily: "Inter_500Medium"
+        },
+        celsiusText: {
+            color: theme.text,
+            fontSize: 28
+        },
+        feelsLikeContainer: {
+            flexDirection: 'column',
+            alignItems: 'center'
+        },
+        weatherTextContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginTop: 5
+        },
+        currentWeatherText: {
+            color: theme.text,
+            fontSize: 18,
+            fontFamily: "Inter_500Medium"
+        },
+        tempRangeContainer: {
+            marginLeft: 20,
+            flexDirection: 'row',
+        },
+        tempRangeText: {
+            color: theme.text,
+            fontSize: 20
         }
     });
 }
