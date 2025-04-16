@@ -27,6 +27,7 @@ import {useLocationStore} from "@/stores/useLocationStore";
 import {handleAxiosError} from "@/utils/handleAxiosError";
 import SunPath from "@/app/component/SunPath";
 import {getSunData, SunItem} from "@/apis/geo/sun";
+import {grayColor} from "@/constants/Colors";
 
 export default function Index() {
     const {location} = useLocationStore();
@@ -374,11 +375,12 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
             flexDirection: "column",
             justifyContent: "space-evenly",
             height: 100,
-            marginLeft: 5
+            marginLeft: 5,
+
         },
         weatherMainHeadRightText: {
             fontSize: 12,
-            color: theme.text,
+            color: grayColor,
             fontFamily: "Inter_500Medium"
         },
         celsiusText: {
