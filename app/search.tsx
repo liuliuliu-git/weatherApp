@@ -1,6 +1,6 @@
 import {View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet} from "react-native";
 import {useEffect, useState} from "react";
-import {searchCity, LocationSearchItem} from "@/apis/location";
+import {searchCity, LocationSearchItem} from "@/apis/citySearch";
 import {useLocationStore} from "@/stores/useLocationStore";
 import {useRouter} from "expo-router";
 

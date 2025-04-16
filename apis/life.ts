@@ -1,6 +1,6 @@
 import { request } from '@/utils/request';
 import {ResType, Location, WeatherParams} from "@/apis/shared";
-
+//生活指数
 // 单项生活建议类型
 export type Suggestion = {
     brief: string; // 简要描述，如“适宜”

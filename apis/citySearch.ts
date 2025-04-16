@@ -1,7 +1,7 @@
-// apis/location.ts
+
 import {request} from '@/utils/request';
 import {ResType, WeatherParams} from '@/apis/shared';
-
+//城市搜索
 // 城市搜索返回项类型
 export type LocationSearchItem = {
     id: string;               // 城市 ID（用于天气接口请求）

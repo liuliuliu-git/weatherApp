@@ -1,6 +1,6 @@
 import { request } from '@/utils/request';
 import { ResType,Location} from "@/apis/shared";
-
+//未来15天逐日天气预报和昨日天气
 // 每日天气信息类型
 export type DailyWeather = {
     date: string; // 日期

@@ -19,7 +19,7 @@ import {FontAwesome5, MaterialIcons, Entypo, Feather, Fontisto, Ionicons} from '
 import {getWeatherNow, WeatherNow} from "@/apis/weather/weatherFact";
 import {useRouter} from "expo-router";
 import {getWeatherIconUri} from "@/utils/getWeatherIconUri";
-import {DailyWeather, getWeatherDaily} from "@/apis/daily";
+import {DailyWeather, getWeatherDaily} from "@/apis/weather/weatherDailyForecast";
 import {Inter_500Medium, useFonts} from "@expo-google-fonts/inter";
 import {ColorScheme, Theme} from "@/types";
 import {SafeAreaView} from "react-native-safe-area-context";
