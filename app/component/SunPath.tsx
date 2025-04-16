@@ -33,6 +33,10 @@ export default function SunPath({sunrise, sunset}: SunPathProps) {
 
     // 将时间转为角度
     const timeToAngle = (time: string) => {
+        if (!sunrise || !sunset) {
+            return 0; // 返回默认值
+        }
+
         const [h, m] = time.split(':').map(Number);
         const minutes = h * 60 + m;
         const sunriseM = parseInt(sunrise.split(':')[0]) * 60 + parseInt(sunrise.split(':')[1]);
@@ -74,11 +78,12 @@ export default function SunPath({sunrise, sunset}: SunPathProps) {
                         fill="none"
                     />
                     {/* 当前太阳位置 */}
-                    <Circle cx={x} cy={y} r={8} fill="#FDB813"/>
+                    {currentTime <= sunset && currentTime >= sunrise && <Circle cx={x} cy={y} r={8} fill="#FDB813"/>}
                 </G>
             </Svg>
 
-            {/* 时间标签 */}
+            {/* 时间标签 */
+            }
             <View style={styles.labels}>
                 <View>
                     <Text>日出</Text>
@@ -90,7 +95,8 @@ export default function SunPath({sunrise, sunset}: SunPathProps) {
                 </View>
             </View>
         </View>
-    );
+    )
+        ;
 }
 
 const styles = StyleSheet.create({

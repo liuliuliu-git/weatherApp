@@ -16,7 +16,7 @@ import {ThemeContext} from "@/context/ThemeContext";
 import {useContext, useEffect, useState} from "react";
 import {StatusBar} from "expo-status-bar";
 import {FontAwesome5, MaterialIcons, Entypo, Feather, Fontisto, Ionicons} from '@expo/vector-icons';
-import {getWeatherNow, WeatherNow} from "@/apis/weather";
+import {getWeatherNow, WeatherNow} from "@/apis/weather/weatherFact";
 import {useRouter} from "expo-router";
 import {getWeatherIconUri} from "@/utils/getWeatherIconUri";
 import {DailyWeather, getWeatherDaily} from "@/apis/daily";
@@ -195,7 +195,6 @@ export default function Index() {
                             <MaterialIcons name="wind-power" size={24} color={theme.text}/>
                             <Text style={styles.detailText}>{recentWeather?.[0]?.wind_scale}级</Text>
                         </View>
-
                     </View>
 
                     {/*三日内天气*/}
