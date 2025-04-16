@@ -2,6 +2,7 @@ import {request} from '@/utils/request';
 import {ResType, Location, WeatherParams} from "@/apis/shared";
 //空气质量实况
 
+
 export type AirStation = {
     aqi: string; // 空气质量指数
     pm25: string; // PM2.5颗粒物（粒径小于等于2.5μm）1小时平均值。单位：μg/m³
@@ -17,7 +18,6 @@ export type AirStation = {
     quality?: string; // 空气质量类别，有"优、良、轻度污染、中度污染、重度污染、严重污染"6类
     last_update: string; // 数据发布时间
 };
-
 export type AirQualityData = {
     location: Location; // 地理位置信息
     air: {

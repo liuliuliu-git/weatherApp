@@ -21,3 +21,4 @@ export type WeatherParams = {
     unit?: number,
     language?: string
 }
+
