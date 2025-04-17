@@ -1,29 +1,47 @@
-import {View, Text, Image} from "react-native";
-import {useEffect, useState} from "react";
-import {getLifeSuggestion} from "@/apis/life";
+import {View, Text, Image, StyleSheet} from "react-native";
+import {useContext, useEffect, useState} from "react";
+import {getLifeSuggestion, SuggestionItem} from "@/apis/life";
+import {Ionicons, MaterialCommunityIcons, MaterialIcons} from "@expo/vector-icons";
+import {ColorScheme, Theme} from "@/types";
+import {grayColor} from "@/constants/Colors";
+import {ThemeContext} from "@/context/ThemeContext";
+import {handleAxiosError} from "@/utils/handleAxiosError";
+import {useLocationStore} from "@/stores/useLocationStore";
 
 export default function Search() {
-    const [data, setData] = useState([]);
-    // 生活指数
+    const [suggestionLife, setSuggestionLife] = useState<SuggestionItem | null>(null);
+    const {colorScheme, theme} = useContext(ThemeContext);
+    const styles = createStyles(theme, colorScheme);
+    const {location} = useLocationStore();
+    //当日生活指数
     useEffect(() => {
         async function fetchData() {
             try {
                 const {data} = await getLifeSuggestion({
                     key: process.env.EXPO_PUBLIC_API_KEY || "",
-                    location: '泉州',
+                    location: location?.id as string,
                 });
-                console.log("res.data.results =", data.results[0]);
-                // setTodayWeather(data.results[0].daily[0]);
-                // setRecentWeather(data.results[0].daily);
+                setSuggestionLife(data.results[0].suggestion[0]);
 
             } catch (error) {
-                console.error('Error fetching weather data:', error);
+                handleAxiosError(error);
             }
         }
+
         fetchData();
     }, []);
-    return <View>
-        <Text>这是详情页</Text>
+    return <View style={styles.container}>
+
     </View>
 
+}
+
+function createStyles(theme: Theme, colorScheme: ColorScheme) {
+    return StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: "#ECF1F7"
+        },
+
+    });
 }

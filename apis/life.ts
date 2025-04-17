@@ -1,4 +1,4 @@
-import { request } from '@/utils/request';
+import {request} from '@/utils/request';
 import {ResType, Location, WeatherParams} from "@/apis/shared";
 //生活指数
 // 单项生活建议类型
@@ -16,24 +16,19 @@ export type SuggestionItem = {
     beer: Suggestion, // 啤酒
     boating: Suggestion, // 划船
     car_washing: Suggestion, // 洗车
-    chill: Suggestion, // 风寒
     comfort: Suggestion, // 舒适度
-    dating: Suggestion, // 约会
     dressing: Suggestion, // 穿衣
     fishing: Suggestion, // 钓鱼
     flu: Suggestion, // 感冒
-    hair_dressing: Suggestion, // 美发
     kiteflying: Suggestion, // 放风筝
     makeup: Suggestion, // 化妆
     mood: Suggestion, // 心情
     morning_sport: Suggestion, // 晨练
-    night_life: Suggestion, // 夜生活
     road_condition: Suggestion, // 路况
     shopping: Suggestion, // 购物
     sport: Suggestion, // 运动
     sunscreen: Suggestion, // 防晒
     traffic: Suggestion, // 交通
-    travel: Suggestion, // 旅游
     umbrella: Suggestion, // 雨伞
     uv: Suggestion, // 紫外线
 };
@@ -45,13 +40,13 @@ export type LifeSuggestion = {
 };
 
 // 获取生活建议信息的请求函数
-export const getLifeSuggestion = ({ key, location }: WeatherParams) => {
+export const getLifeSuggestion = ({key, location, days = 5}: WeatherParams) => {
     return request.get<ResType<LifeSuggestion[]>>(`/life/suggestion.json`, {
         params: {
             key,
             location,
             language: 'zh-Hans',
-            days: 5
+            days
         }
     });
 };

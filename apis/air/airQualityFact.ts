@@ -11,11 +11,11 @@ export type AirStation = {
     no2: string; // 二氧化氮1小时平均值。单位：μg/m³
     co: string; // 一氧化碳1小时平均值。单位：mg/m³
     o3: string; // 臭氧1小时平均值。单位：μg/m³
+    quality: string; // 空气质量类别，有"优、良、轻度污染、中度污染、重度污染、严重污染"6类
     primary_pollutant?: string; // 首要污染物
     station?: string; // 监测站名称
     latitude?: string; // 监测站纬度
     longitude?: string; // 监测站经度
-    quality?: string; // 空气质量类别，有"优、良、轻度污染、中度污染、重度污染、严重污染"6类
     last_update: string; // 数据发布时间
 };
 export type AirQualityData = {
