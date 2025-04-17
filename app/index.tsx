@@ -15,7 +15,15 @@ import {
 import {ThemeContext} from "@/context/ThemeContext";
 import {useContext, useEffect, useState} from "react";
 import {StatusBar} from "expo-status-bar";
-import {FontAwesome5, MaterialIcons, Entypo, Feather, Fontisto, Ionicons} from '@expo/vector-icons';
+import {
+    FontAwesome5,
+    MaterialIcons,
+    Entypo,
+    Feather,
+    Fontisto,
+    Ionicons,
+    MaterialCommunityIcons
+} from '@expo/vector-icons';
 import {getWeatherNow, WeatherNow} from "@/apis/weather/weatherFact";
 import {useRouter} from "expo-router";
 import {getWeatherIconUri} from "@/utils/getWeatherIconUri";
@@ -28,6 +36,7 @@ import {handleAxiosError} from "@/utils/handleAxiosError";
 import SunPath from "@/app/component/SunPath";
 import {getSunData, SunItem} from "@/apis/geo/sun";
 import {grayColor} from "@/constants/Colors";
+import {getLifeSuggestion, SuggestionItem} from "@/apis/life";
 
 export default function Index() {
     const {location} = useLocationStore();
@@ -37,6 +46,7 @@ export default function Index() {
     const [weatherCode, setWeatherCode] = useState<number>(0);
     const [recentWeather, setRecentWeather] = useState<DailyWeather[] | null>(null);
     const [sunData, setSunData] = useState<SunItem | null>(null);
+    const [suggestionLife, setSuggestionLife] = useState<SuggestionItem | null>(null);
     const router = useRouter();
     // const params = {
     //     key: process.env.EXPO_PUBLIC_API_KEY,
@@ -98,6 +108,23 @@ export default function Index() {
 
         fetchData();
     }, []);
+    //当日生活指数
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const {data} = await getLifeSuggestion({
+                    key: process.env.EXPO_PUBLIC_API_KEY || "",
+                    location: location?.id as string,
+                });
+                setSuggestionLife(data.results[0].suggestion[0]);
+            } catch (error) {
+                handleAxiosError(error);
+            }
+        }
+
+        fetchData();
+    }, []);
+
     if (!loaded && !error) {
         return null
     }
@@ -169,6 +196,7 @@ export default function Index() {
                 </View>
                 <ScrollView showsVerticalScrollIndicator={false}>
                     {/* 当前天气 */}
+                    <Button title={"press on me "} onPress={()=>router.push("/weatherdetail")}/>
                     <View style={[styles.weatherMain, styles.weatherMainContainer]}>
                         <View style={styles.weatherMainHead}>
                             <Text style={styles.tempText}>{now?.temperature}</Text>
@@ -220,6 +248,100 @@ export default function Index() {
                     </View>
                     {/*日出日落*/}
                     <SunPath sunrise={sunData?.sunrise as string} sunset={sunData?.sunset as string}/>
+                    {/*空气质量实况*/}
+                    {/*生活建议*/}
+                    <View style={styles.suggestionContainer}>
+                        <View style={styles.suggestionGrid}>
+                            {/* 晾晒 */}
+                            <View style={styles.suggestionItemWrapper}>
+                                <View style={styles.flatCard}>
+                                    <View style={[styles.suggestionIconContainer, styles.blueIconContainer]}>
+                                        <Ionicons name="shirt-outline" size={22} color="#FFFFFF"/>
+                                    </View>
+                                    <Text style={styles.suggestionText}>晾晒</Text>
+                                    <Text style={styles.suggestionDesc}>{suggestionLife?.airing?.brief}</Text>
+                                </View>
+                            </View>
+
+                            {/* 过敏 */}
+                            <View style={styles.suggestionItemWrapper}>
+                                <View style={styles.flatCard}>
+                                    <View style={[styles.suggestionIconContainer, styles.purpleIconContainer]}>
+                                        <MaterialIcons name="healing" size={22} color="#FFFFFF"/>
+                                    </View>
+                                    <Text style={styles.suggestionText}>过敏</Text>
+                                    <Text style={styles.suggestionDesc}>{suggestionLife?.allergy?.brief}</Text>
+                                </View>
+                            </View>
+
+                            {/* 旅游 */}
+                            <View style={styles.suggestionItemWrapper}>
+                                <View style={styles.flatCard}>
+                                    <View style={[styles.suggestionIconContainer, styles.tealIconContainer]}>
+                                        <MaterialCommunityIcons name="kite" size={24} color="#ffffff" />
+                                    </View>
+                                    <Text style={styles.suggestionText}>放风筝</Text>
+                                    <Text style={styles.suggestionDesc}>{suggestionLife?.kiteflying?.brief}</Text>
+                                </View>
+                            </View>
+
+                            {/* 运动 */}
+                            <View style={styles.suggestionItemWrapper}>
+                                <View style={styles.flatCard}>
+                                    <View style={[styles.suggestionIconContainer, styles.greenIconContainer]}>
+                                        <Ionicons name="fitness-outline" size={22} color="#FFFFFF"/>
+                                    </View>
+                                    <Text style={styles.suggestionText}>运动</Text>
+                                    <Text style={styles.suggestionDesc}>{suggestionLife?.sport?.brief}</Text>
+                                </View>
+                            </View>
+
+                            {/* 钓鱼 */}
+                            <View style={styles.suggestionItemWrapper}>
+                                <View style={styles.flatCard}>
+                                    <View style={[styles.suggestionIconContainer, styles.orangeIconContainer]}>
+                                        <MaterialIcons name="beach-access" size={22} color="#FFFFFF"/>
+                                    </View>
+                                    <Text style={styles.suggestionText}>钓鱼</Text>
+                                    <Text style={styles.suggestionDesc}>{suggestionLife?.fishing?.brief}</Text>
+                                </View>
+                            </View>
+
+                            {/* 洗车 */}
+                            <View style={styles.suggestionItemWrapper}>
+                                <View style={styles.flatCard}>
+                                    <View style={[styles.suggestionIconContainer, styles.blueGrayIconContainer]}>
+                                        <Ionicons name="car-outline" size={22} color="#FFFFFF"/>
+                                    </View>
+                                    <Text style={styles.suggestionText}>洗车</Text>
+                                    <Text style={styles.suggestionDesc}>{suggestionLife?.car_washing?.brief}</Text>
+                                </View>
+                            </View>
+
+                            {/* 雨伞 */}
+                            <View style={styles.suggestionItemWrapper}>
+                                <View style={styles.flatCard}>
+                                    <View style={[styles.suggestionIconContainer, styles.indigoIconContainer]}>
+                                        <Ionicons name="umbrella-outline" size={22} color="#FFFFFF"/>
+                                    </View>
+                                    <Text style={styles.suggestionText}>雨伞</Text>
+                                    <Text style={styles.suggestionDesc}>{suggestionLife?.umbrella?.brief}</Text>
+                                </View>
+                            </View>
+
+                            {/* 感冒 */}
+                            <View style={styles.suggestionItemWrapper}>
+                                <View style={styles.flatCard}>
+                                    <View style={[styles.suggestionIconContainer, styles.redIconContainer]}>
+                                        <Ionicons name="medical-outline" size={22} color="#FFFFFF"/>
+                                    </View>
+                                    <Text style={styles.suggestionText}>感冒</Text>
+                                    <Text style={styles.suggestionDesc}>{suggestionLife?.flu?.brief}</Text>
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+
                     <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'}/>
                 </ScrollView>
 
@@ -408,6 +530,83 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
         tempRangeText: {
             color: theme.text,
             fontSize: 20
+        },
+        suggestionContainer: {
+            width: '100%',
+            paddingHorizontal: 15,
+            marginVertical: 30
+        },
+        suggestionGrid: {
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+        },
+        suggestionItemWrapper: {
+            width: '48%',
+            borderRadius: 18,
+            overflow: 'hidden',
+            marginBottom: 12,
+            backgroundColor: "#ece7e7",
+            shadowColor: "#000",
+            shadowOffset: {width: 0, height: 1},
+            shadowOpacity: 0.1,
+            shadowRadius: 2,
+            elevation: 1,
+        },
+        flatCard: {
+            paddingTop: 10,
+            paddingLeft: 65,
+            paddingRight: 10,
+            paddingBottom: 10,
+            height: 70,
+            justifyContent: 'center',
+            borderRadius: 8,
+            borderWidth: 0,
+        },
+        suggestionIconContainer: {
+            width: 36,
+            height: 36,
+            justifyContent: 'center',
+            alignItems: 'center',
+            position: 'absolute',
+            left: 10,
+            top: 15,
+            borderRadius: 8,
+        },
+        blueIconContainer: {
+            backgroundColor: '#1E88E5',
+        },
+        purpleIconContainer: {
+            backgroundColor: '#8E24AA',
+        },
+        tealIconContainer: {
+            backgroundColor: '#00BCD4',
+        },
+        greenIconContainer: {
+            backgroundColor: '#4CAF50',
+        },
+        orangeIconContainer: {
+            backgroundColor: '#FF9800',
+        },
+        redIconContainer: {
+            backgroundColor: '#F44336',
+        },
+        blueGrayIconContainer: {
+            backgroundColor: '#607D8B',
+        },
+        indigoIconContainer: {
+            backgroundColor: '#3F51B5',
+        },
+        suggestionText: {
+            color: '#333333',
+            fontSize: 15,
+            fontWeight: '500',
+            fontFamily: "Inter_500Medium",
+            marginBottom: 3
+        },
+        suggestionDesc: {
+            color: '#999999',
+            fontSize: 12
         }
     });
 }
