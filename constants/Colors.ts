@@ -9,7 +9,7 @@ export const grayColor = '#8f99ae';
 export const Colors = {
   light: {
     text: '#11181C',
-    background: '#fff',
+    background: '#66A0E4',
     tint: tintColorLight,
     icon: 'rgba(255, 255, 255, 0.2)',
     tabIconDefault: '#687076',
@@ -18,7 +18,7 @@ export const Colors = {
   },
   dark: {
     text: '#ECEDEE',
-    background: '#151718',
+    background: '#011132',
     tint: tintColorDark,
     icon: 'rgba(0, 0, 0, 0.2)',
     tabIconDefault: '#9BA1A6',

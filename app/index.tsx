@@ -13,7 +13,7 @@ import {
 } from "react-native";
 
 import {ThemeContext} from "@/context/ThemeContext";
-import {useContext, useEffect, useState} from "react";
+import {useContext, useEffect, useMemo, useState} from "react";
 import {StatusBar} from "expo-status-bar";
 import {
     FontAwesome5,
@@ -37,6 +37,8 @@ import SunPath from "@/app/component/SunPath";
 import {getSunData, SunItem} from "@/apis/geo/sun";
 import {grayColor} from "@/constants/Colors";
 import {getLifeSuggestion, SuggestionItem} from "@/apis/life";
+import {AirStation, getAirQuality} from "@/apis/air/airQualityFact";
+import AQIProgressBar from "./component/AQIProgressBar";
 
 export default function Index() {
     const {location} = useLocationStore();
@@ -47,6 +49,7 @@ export default function Index() {
     const [recentWeather, setRecentWeather] = useState<DailyWeather[] | null>(null);
     const [sunData, setSunData] = useState<SunItem | null>(null);
     const [suggestionLife, setSuggestionLife] = useState<SuggestionItem | null>(null);
+    const [airQualityFact, setAirQualityFact] = useState<AirStation | null>(null);
     const router = useRouter();
     // const params = {
     //     key: process.env.EXPO_PUBLIC_API_KEY,
@@ -124,7 +127,26 @@ export default function Index() {
 
         fetchData();
     }, []);
+    //获取空气质量实况
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const {data} = await getAirQuality({
+                    key: process.env.EXPO_PUBLIC_API_KEY || "",
+                    location: location?.id as string,
+                });
+                setAirQualityFact(data.results[0].air.city);
+            } catch (error) {
+                handleAxiosError(error);
+            }
+        }
 
+        fetchData();
+    }, [])
+    const aqi = useMemo(() => {
+        const parsed = parseInt(airQualityFact?.aqi);
+        return isNaN(parsed) ? 0 : parsed;
+    }, [airQualityFact]);
     if (!loaded && !error) {
         return null
     }
@@ -196,7 +218,7 @@ export default function Index() {
                 </View>
                 <ScrollView showsVerticalScrollIndicator={false}>
                     {/* 当前天气 */}
-                    <Button title={"press on me "} onPress={()=>router.push("/weatherdetail")}/>
+                    <Button title={"press on me "} onPress={() => router.push("/weatherdetail")}/>
                     <View style={[styles.weatherMain, styles.weatherMainContainer]}>
                         <View style={styles.weatherMainHead}>
                             <Text style={styles.tempText}>{now?.temperature}</Text>
@@ -249,6 +271,69 @@ export default function Index() {
                     {/*日出日落*/}
                     <SunPath sunrise={sunData?.sunrise as string} sunset={sunData?.sunset as string}/>
                     {/*空气质量实况*/}
+                    <View style={styles.airQualityContainer}>
+                        <View style={styles.airQualityCard}>
+                            <View style={styles.airQualityHeader}>
+                                <View style={styles.airQualityValue}>
+                                    <Text style={styles.airQualityNumber}>空气质量指数</Text>
+                                </View>
+                                <TouchableOpacity style={styles.airQualityMore}>
+                                    <Text style={styles.airQualityMoreText}>查看详情</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                            <View style={styles.airQualityProgressContainer}>
+                                <AQIProgressBar aqi={aqi}/>
+                                <View style={styles.airQualityRange}>
+                                    <Text style={styles.airQualityRangeText}>优</Text>
+                                    <Text style={styles.airQualityRangeText}>严重</Text>
+                                </View>
+                            </View>
+
+                            {/*<View style={styles.airQualityDetails}>*/}
+                            {/*    <View style={styles.pollutantRow}>*/}
+                            {/*        <View style={styles.airQualityDetailItem}>*/}
+                            {/*            <Text style={styles.airQualityDetailTitle}>*/}
+                            {/*                PM<Text style={styles.subscript}>2.5</Text>*/}
+                            {/*            </Text>*/}
+                            {/*            <Text style={styles.airQualityDetailValue}>{airQualityFact?.pm25}</Text>*/}
+                            {/*            <View style={styles.pollutantBarContainer}>*/}
+                            {/*                <View style={[styles.pollutantBar, styles.pm25Bar]}></View>*/}
+                            {/*            </View>*/}
+                            {/*        </View>*/}
+                            {/*        */}
+                            {/*        <View style={styles.airQualityDetailItem}>*/}
+                            {/*            <Text style={styles.airQualityDetailTitle}>*/}
+                            {/*                PM<Text style={styles.subscript}>10</Text>*/}
+                            {/*            </Text>*/}
+                            {/*            <Text style={styles.airQualityDetailValue}>{airQualityFact?.pm10}</Text>*/}
+                            {/*            <View style={styles.pollutantBarContainer}>*/}
+                            {/*                <View style={[styles.pollutantBar, styles.pm10Bar]}></View>*/}
+                            {/*            </View>*/}
+                            {/*        </View>*/}
+                            {/*    */}
+                            {/*        <View style={styles.airQualityDetailItem}>*/}
+                            {/*            <Text style={styles.airQualityDetailTitle}>CO</Text>*/}
+                            {/*            <Text style={styles.airQualityDetailValue}>{airQualityFact?.co}</Text>*/}
+                            {/*            <View style={styles.pollutantBarContainer}>*/}
+                            {/*                <View style={[styles.pollutantBar, styles.coBar]}></View>*/}
+                            {/*            </View>*/}
+                            {/*        </View>*/}
+                            {/*        */}
+                            {/*        <View style={styles.airQualityDetailItem}>*/}
+                            {/*            <Text style={styles.airQualityDetailTitle}>*/}
+                            {/*                SO<Text style={styles.subscript}>2</Text>*/}
+                            {/*            </Text>*/}
+                            {/*            <Text style={styles.airQualityDetailValue}>2</Text>*/}
+                            {/*            <View style={styles.pollutantBarContainer}>*/}
+                            {/*                <View style={[styles.pollutantBar, styles.so2Bar]}></View>*/}
+                            {/*            </View>*/}
+                            {/*        </View>*/}
+                            {/*    </View>*/}
+                            {/*</View>*/}
+                        </View>
+                    </View>
+
                     {/*生活建议*/}
                     <View style={styles.suggestionContainer}>
                         <View style={styles.suggestionGrid}>
@@ -278,7 +363,7 @@ export default function Index() {
                             <View style={styles.suggestionItemWrapper}>
                                 <View style={styles.flatCard}>
                                     <View style={[styles.suggestionIconContainer, styles.tealIconContainer]}>
-                                        <MaterialCommunityIcons name="kite" size={24} color="#ffffff" />
+                                        <MaterialCommunityIcons name="kite" size={24} color="#ffffff"/>
                                     </View>
                                     <Text style={styles.suggestionText}>放风筝</Text>
                                     <Text style={styles.suggestionDesc}>{suggestionLife?.kiteflying?.brief}</Text>
@@ -607,6 +692,148 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
         suggestionDesc: {
             color: '#999999',
             fontSize: 12
-        }
+        },
+        airQualityContainer: {
+            paddingHorizontal: 15,
+            marginTop: 30
+        },
+        airQualityCard: {
+            backgroundColor: '#FFFFFF',
+            borderRadius: 16,
+            padding: 15,
+            shadowColor: '#000',
+            shadowOffset: {width: 0, height: 1},
+            shadowOpacity: 0.1,
+            shadowRadius: 2,
+            elevation: 2
+        },
+        airQualityHeader: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 10
+        },
+        airQualityValue: {
+            flexDirection: 'row',
+            alignItems: 'flex-end'
+        },
+        airQualityNumber: {
+            fontSize: 20,
+            fontWeight: 'bold',
+            color: '#333333',
+            marginRight: 5
+        },
+        airQualityLevel: {
+            fontSize: 18,
+            marginBottom: 8
+        },
+
+        airQualityMore: {
+            backgroundColor: '#F5F5F5',
+            paddingVertical: 5,
+            paddingHorizontal: 10,
+            borderRadius: 20
+        },
+        airQualityMoreText: {
+            fontSize: 12,
+            color: '#757575'
+        },
+        airQualityProgressContainer: {
+            marginBottom: 20
+        },
+        airQualityProgress: {
+            height: 8,
+            flexDirection: 'row',
+            borderRadius: 4,
+            overflow: 'hidden'
+        },
+        progressSegment: {
+            height: '100%',
+            flex: 1
+        },
+        progressGood: {
+            backgroundColor: '#7EB815'  // 绿色
+        },
+        progressModerate: {
+            backgroundColor: '#D1D50F'  // 黄色
+        },
+        progressLightPolluted: {
+            backgroundColor: '#E69C19'  // 橙色
+        },
+        progressModeratelyPolluted: {
+            backgroundColor: '#CC1119'  // 红色
+        },
+        progressSeverelyPolluted: {
+            backgroundColor: '#710078'  // 紫色
+        },
+        progressExtremelyPolluted: {
+            backgroundColor: '#4A0D1F'  // 褐红色
+        },
+        airQualityDetails: {
+            marginTop: 15,
+            marginHorizontal: 5
+        },
+        pollutantRow: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginBottom: 5
+        },
+        airQualityDetailItem: {
+            width: '22%'
+        },
+        airQualityDetailTitle: {
+            fontSize: 14,
+            color: '#888888',
+            marginBottom: 4,
+            textAlign: 'center'
+        },
+        airQualityDetailValue: {
+            fontSize: 20,
+            fontWeight: 'bold',
+            color: '#333333',
+            marginBottom: 5,
+            textAlign: 'center'
+        },
+        pollutantBarContainer: {
+            height: 4,
+            backgroundColor: '#EEEEEE',
+            borderRadius: 2,
+            overflow: 'hidden',
+            marginTop: 2
+        },
+        pollutantBar: {
+            height: '100%',
+            borderRadius: 2,
+            backgroundColor: '#7EB815'
+        },
+        pm25Bar: {
+            width: '40%'  // 固定宽度来匹配图片
+        },
+        pm10Bar: {
+            width: '60%'  // 固定宽度来匹配图片
+        },
+        coBar: {
+            backgroundColor: '#EEEEEE',
+            width: '0%'
+        },
+        so2Bar: {
+            width: '15%'  // 固定宽度来匹配图片
+        },
+        airQualityRange: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginTop: 5
+        },
+        airQualityRangeText: {
+            fontSize: 12,
+            color: '#757575'
+        },
+        subscript: {
+            fontSize: 10,
+            lineHeight: 12,
+            textAlignVertical: 'bottom',
+            includeFontPadding: false,
+            marginBottom: 2
+        },
     });
 }
