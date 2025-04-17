@@ -144,7 +144,7 @@ export default function Index() {
         fetchData();
     }, [])
     const aqi = useMemo(() => {
-        const parsed = parseInt(airQualityFact?.aqi);
+        const parsed = parseInt(airQualityFact?.aqi as string);
         return isNaN(parsed) ? 0 : parsed;
     }, [airQualityFact]);
     if (!loaded && !error) {

@@ -23,14 +23,19 @@ const AQIProgressBar = ({aqi}: { aqi: number }) => {
     const getAQILevel = () =>
         AQI_LEVELS.find((level) => aqi <= level.max) || AQI_LEVELS[AQI_LEVELS.length - 1];
     const level = getAQILevel();
-    const levelColor = level.color;
     const aqiLineX = useRef(new Animated.Value(0)).current;
-
+    // 限制文字移动范围，防止越界
+    const clampedX = aqiLineX.interpolate({
+        inputRange: [-5, WIDTH],
+        outputRange: [0, WIDTH - 15], // 防止右边超出，30 是文字宽度预估
+        extrapolate: 'clamp',
+    });
     useEffect(() => {
         const toValue = (aqi / 500) * WIDTH;
         Animated.timing(aqiLineX, {
             toValue,
-            duration: 3000, // 动画持续时间
+            delay:700,
+            duration: 2000, // 动画持续时间
             useNativeDriver: true,
         }).start();
     }, [aqi]);
@@ -44,7 +49,7 @@ const AQIProgressBar = ({aqi}: { aqi: number }) => {
                 style={[
                     styles.textAbove,
                     {
-                        transform: [{translateX: aqiLineX}],
+                        transform: [{translateX: clampedX}],
                     },
                 ]}
             >
@@ -55,7 +60,7 @@ const AQIProgressBar = ({aqi}: { aqi: number }) => {
                 style={[
                     styles.textBelow,
                     {
-                        transform: [{translateX: aqiLineX}],
+                        transform: [{translateX: clampedX}],
                     },
                 ]}
             >
