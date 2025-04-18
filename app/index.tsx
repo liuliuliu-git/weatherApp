@@ -78,13 +78,15 @@ export default function Index() {
 
         fetchData();
     }, []);
-    //未来16天逐日天气预报以及昨日天气
+    //逐日天气预报以及昨日天气
     useEffect(() => {
         async function fetchData() {
             try {
                 const {data} = await getWeatherDaily({
                     key: process.env.EXPO_PUBLIC_API_KEY || "",
                     location: location?.id as string,
+                    days: 7,
+                    start: -1
                 });
                 setRecentWeather(data.results[0].daily);
             } catch (error) {
@@ -241,7 +243,7 @@ export default function Index() {
                             </View>
                         </View>
                     </View>
-                    <View  >
+                    <View>
                         <FlatList
                             horizontal={false}
                             data={recentWeather}
@@ -492,7 +494,7 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
             paddingRight: 5,
         },
         tempMinContainer: {
-            width: 40, 
+            width: 40,
             alignItems: 'center',
         },
         tempMaxContainer: {
