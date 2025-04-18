@@ -154,6 +154,7 @@ export default function Index() {
         const dateParts = item.date.split('-');
         const month = dateParts[1];
         const day = dateParts[2];
+
         // 降雨概率计算
         const rainProb = Math.round(parseFloat(item.precip) * 100);
 
@@ -182,8 +183,12 @@ export default function Index() {
 
                 {/* 温度 */}
                 <View style={styles.tempContainer}>
-                    <Text style={styles.tempMin}>{item.low}</Text>
-                    <Text style={styles.tempMax}>{item.high}</Text>
+                    <View style={styles.tempMinContainer}>
+                        <Text style={styles.tempMin}>{item.low}</Text>
+                    </View>
+                    <View style={styles.tempMaxContainer}>
+                        <Text style={styles.tempMax}>{item.high}</Text>
+                    </View>
                 </View>
             </View>
         );
@@ -236,9 +241,7 @@ export default function Index() {
                             </View>
                         </View>
                     </View>
-
-
-                    <View>
+                    <View  >
                         <FlatList
                             horizontal={false}
                             data={recentWeather}
@@ -362,6 +365,7 @@ export default function Index() {
                                         <Ionicons name="medical-outline" size={22} color="#FFFFFF"/>
                                     </View>
                                     <Text style={styles.suggestionText}>感冒</Text>
+
                                     <Text style={styles.suggestionDesc}>{suggestionLife?.flu?.brief}</Text>
                                 </View>
                             </View>
@@ -482,20 +486,31 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
             marginLeft: 5,
         },
         tempContainer: {
+            width: '25%',
             flexDirection: 'row',
             justifyContent: 'flex-end',
             paddingRight: 5,
         },
+        tempMinContainer: {
+            width: 40, 
+            alignItems: 'center',
+        },
+        tempMaxContainer: {
+            width: 40,
+            alignItems: 'center',
+            marginLeft: 5,
+        },
         tempMin: {
             fontSize: 18,
             color: '#FFFFFF',
-            marginRight: 15,
-            fontFamily: "Inter_500Medium"
+            fontFamily: "monospace",
+            textAlign: "center"
         },
         tempMax: {
             fontSize: 18,
             color: '#FFFFFF',
-            fontFamily: "Inter_500Medium"
+            fontFamily: "monospace",
+            textAlign: "center"
         },
         lifeItem: {
             flexDirection: "column",
