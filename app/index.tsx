@@ -39,13 +39,13 @@ import {grayColor} from "@/constants/Colors";
 import {getLifeSuggestion, SuggestionItem} from "@/apis/life";
 import {AirStation, getAirQuality} from "@/apis/air/airQualityFact";
 import AQIProgressBar from "./component/AQIProgressBar";
+import {getWeekday} from "@/utils/getWeekday";
 
 export default function Index() {
     const {location} = useLocationStore();
     const {colorScheme, theme} = useContext(ThemeContext);
     const styles = createStyles(theme, colorScheme);
     const [now, setNow] = useState<WeatherNow | null>(null);
-    const [weatherCode, setWeatherCode] = useState<number>(0);
     const [recentWeather, setRecentWeather] = useState<DailyWeather[] | null>(null);
     const [sunData, setSunData] = useState<SunItem | null>(null);
     const [suggestionLife, setSuggestionLife] = useState<SuggestionItem | null>(null);
@@ -69,7 +69,6 @@ export default function Index() {
                 });
                 if (data.results && data.results.length > 0) {
                     setNow(data.results[0].now); // 更新状态为当前天气数据
-                    setWeatherCode(parseInt(data.results[0].now.code));
                 }
 
             } catch (error) {
@@ -79,7 +78,7 @@ export default function Index() {
 
         fetchData();
     }, []);
-    //未来3天逐日天气预报
+    //未来16天逐日天气预报以及昨日天气
     useEffect(() => {
         async function fetchData() {
             try {
@@ -150,48 +149,45 @@ export default function Index() {
     if (!loaded && !error) {
         return null
     }
-    const renderItem = ({item}: { item: DailyWeather }) => (
-        <View style={styles.dailyWeatherItem}>
-            <Text style={styles.dateText}>{item.date.replace(/^[0-9]{4}-/, '').replace(/-/, '/')}</Text>
-            <View style={styles.dailyWeatherRow}>
-                {/* 晨间天气 */}
-                <View style={styles.eachItem}>
-                    <Text>晨间天气</Text>
+    const renderItem = ({item}: { item: DailyWeather }) => {
+        // 提取日期和月份
+        const dateParts = item.date.split('-');
+        const month = dateParts[1];
+        const day = dateParts[2];
+        // 降雨概率计算
+        const rainProb = Math.round(parseFloat(item.precip) * 100);
+
+        return (
+            <View style={styles.dailyWeatherItem}>
+                {/* 日期和星期 */}
+                <View style={styles.dateContainer}>
+                    <Text style={styles.dateText}>{`${month}/${day}`}</Text>
+                    <Text style={styles.weekdayText}>
+                        {getWeekday(item.date)}
+                    </Text>
+                </View>
+
+                {/* 天气图标和降雨概率固定宽度容器 */}
+                <View style={styles.weatherIconContainer}>
                     <Image
                         source={{uri: getWeatherIconUri(Number(item.code_day), "light")}}
-                        style={styles.dailyWeatherImg}
+                        style={styles.weatherIcon}
                     />
-                    <Text style={styles.weatherText}>{item.text_day}</Text>
-                </View>
-                {/* 晚间天气 */}
-                <View style={styles.eachItem}>
-                    <Text>晚间天气</Text>
-                    <Image
-                        source={{uri: getWeatherIconUri(Number(item.code_night), "dark")}}
-                        style={styles.dailyWeatherImg}
-                    />
-                    <Text style={styles.weatherText}>{item.text_night}</Text>
+                    {rainProb > 0 ? (
+                        <Text style={styles.rainProbability}>{rainProb}%</Text>
+                    ) : (
+                        <Text style={[styles.rainProbability, {opacity: 0}]}>0%</Text>
+                    )}
                 </View>
 
-            </View>
-            <View style={styles.dailyWeatherRow}>
-                {/* 最高温 */}
-                <View style={styles.eachItem}>
-                    <Text>最高温</Text>
-                    <FontAwesome5 name="temperature-high" size={24} color={theme.text}/>
-                    <Text style={styles.weatherText}>{item.high}°C</Text>
-                </View>
-                {/* 最低温度 */}
-                <View style={styles.eachItem}>
-                    <Text>最低温</Text>
-                    <FontAwesome5 name="temperature-low" size={24} color={theme.text}/>
-                    <Text style={styles.weatherText}>{item.low}°C</Text>
+                {/* 温度 */}
+                <View style={styles.tempContainer}>
+                    <Text style={styles.tempMin}>{item.low}</Text>
+                    <Text style={styles.tempMax}>{item.high}</Text>
                 </View>
             </View>
-
-        </View>
-    );
-
+        );
+    };
     return (
         <SafeAreaView style={styles.container}>
             <ImageBackground blurRadius={50} style={styles.image} source={require("../assets/images/img.png")}>
@@ -241,30 +237,18 @@ export default function Index() {
                         </View>
                     </View>
 
-                    {/* 天气详情 */}
-                    <View style={styles.detailsContainer}>
-                        {/*降水概率数据要×100*/}
-                        <View style={styles.detailItem}>
-                            <Ionicons name="rainy-outline" size={24} color={theme.text}/>
-                            <Text
-                                style={styles.detailText}>{parseInt(recentWeather?.[0]?.precip as string) * 100}%</Text>
-                        </View>
-                        {/*风速*/}
-                        <View style={styles.detailItem}>
-                            <Fontisto name="wind" size={24} color={theme.text}/>
-                            <Text style={styles.detailText}>{recentWeather?.[0]?.wind_speed}m/s</Text>
-                        </View>
-                        {/*风力等级*/}
-                        <View style={styles.detailItem}>
-                            <MaterialIcons name="wind-power" size={24} color={theme.text}/>
-                            <Text style={styles.detailText}>{recentWeather?.[0]?.wind_scale}级</Text>
-                        </View>
-                    </View>
 
-                    {/*三日内天气*/}
-                    <FlatList horizontal data={recentWeather} renderItem={renderItem}
-                              showsHorizontalScrollIndicator={false}
-                              keyExtractor={(item) => item.date}></FlatList>
+                    <View>
+                        <FlatList
+                            horizontal={false}
+                            data={recentWeather}
+                            renderItem={renderItem}
+                            showsVerticalScrollIndicator={false}
+                            scrollEnabled={true}
+                            keyExtractor={(item) => item.date}
+                            style={styles.forecastList}
+                        />
+                    </View>
                     <View>
                         <View style={styles.lifeItem}></View>
                     </View>
@@ -275,7 +259,7 @@ export default function Index() {
                         <View style={styles.airQualityCard}>
                             <View style={styles.airQualityHeader}>
                                 <View style={styles.airQualityValue}>
-                                    <Text style={styles.airQualityNumber}>空气质量指数</Text>
+                                    <Text style={styles.airQualityNumber}>空气质量指数 {airQualityFact?.quality}</Text>
                                 </View>
                                 <TouchableOpacity style={styles.airQualityMore}>
                                     <Text style={styles.airQualityMoreText}>查看详情</Text>
@@ -289,48 +273,6 @@ export default function Index() {
                                     <Text style={styles.airQualityRangeText}>严重</Text>
                                 </View>
                             </View>
-
-                            {/*<View style={styles.airQualityDetails}>*/}
-                            {/*    <View style={styles.pollutantRow}>*/}
-                            {/*        <View style={styles.airQualityDetailItem}>*/}
-                            {/*            <Text style={styles.airQualityDetailTitle}>*/}
-                            {/*                PM<Text style={styles.subscript}>2.5</Text>*/}
-                            {/*            </Text>*/}
-                            {/*            <Text style={styles.airQualityDetailValue}>{airQualityFact?.pm25}</Text>*/}
-                            {/*            <View style={styles.pollutantBarContainer}>*/}
-                            {/*                <View style={[styles.pollutantBar, styles.pm25Bar]}></View>*/}
-                            {/*            </View>*/}
-                            {/*        </View>*/}
-                            {/*        */}
-                            {/*        <View style={styles.airQualityDetailItem}>*/}
-                            {/*            <Text style={styles.airQualityDetailTitle}>*/}
-                            {/*                PM<Text style={styles.subscript}>10</Text>*/}
-                            {/*            </Text>*/}
-                            {/*            <Text style={styles.airQualityDetailValue}>{airQualityFact?.pm10}</Text>*/}
-                            {/*            <View style={styles.pollutantBarContainer}>*/}
-                            {/*                <View style={[styles.pollutantBar, styles.pm10Bar]}></View>*/}
-                            {/*            </View>*/}
-                            {/*        </View>*/}
-                            {/*    */}
-                            {/*        <View style={styles.airQualityDetailItem}>*/}
-                            {/*            <Text style={styles.airQualityDetailTitle}>CO</Text>*/}
-                            {/*            <Text style={styles.airQualityDetailValue}>{airQualityFact?.co}</Text>*/}
-                            {/*            <View style={styles.pollutantBarContainer}>*/}
-                            {/*                <View style={[styles.pollutantBar, styles.coBar]}></View>*/}
-                            {/*            </View>*/}
-                            {/*        </View>*/}
-                            {/*        */}
-                            {/*        <View style={styles.airQualityDetailItem}>*/}
-                            {/*            <Text style={styles.airQualityDetailTitle}>*/}
-                            {/*                SO<Text style={styles.subscript}>2</Text>*/}
-                            {/*            </Text>*/}
-                            {/*            <Text style={styles.airQualityDetailValue}>2</Text>*/}
-                            {/*            <View style={styles.pollutantBarContainer}>*/}
-                            {/*                <View style={[styles.pollutantBar, styles.so2Bar]}></View>*/}
-                            {/*            </View>*/}
-                            {/*        </View>*/}
-                            {/*    </View>*/}
-                            {/*</View>*/}
                         </View>
                     </View>
 
@@ -402,7 +344,6 @@ export default function Index() {
                                     <Text style={styles.suggestionDesc}>{suggestionLife?.car_washing?.brief}</Text>
                                 </View>
                             </View>
-
                             {/* 雨伞 */}
                             <View style={styles.suggestionItemWrapper}>
                                 <View style={styles.flatCard}>
@@ -496,80 +437,65 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
             color: theme.text,
             fontFamily: "Inter_500Medium"
         },
-        detailsContainer: {
-            flexDirection: "row",
-            width: '100%',
-            justifyContent: 'space-evenly',
-            marginBottom: 10,
-            gap: 25
-        },
-        detailsContainerWithBg: {
-            flexDirection: "row",
-            width: '100%',
-            justifyContent: 'space-evenly',
-            marginBottom: 10,
-            gap: 25,
-            backgroundColor: "rgba(255, 255, 255, 0.1)",
-            paddingVertical: 15,
-            borderRadius: 15,
-            marginHorizontal: 20
-        },
-        detailItem: {
-            flexDirection: "row",
-            alignItems: "center",
-        },
-        detailIcon: {
-            marginRight: 8
-        },
-        detailText: {
-            marginLeft: 15,
-            fontSize: 16,
-            color: theme.text,
-            marginBottom: 6,
-            fontFamily: "Inter_500Medium"
-        },
-        actionButton: {
-            alignItems: "center",
-            backgroundColor: "rgba(255, 255, 255, 0.2)",
-            padding: 12,
-            borderRadius: 12,
-        },
         dailyWeatherItem: {
-            flexDirection: "column",
-            marginHorizontal: 10,
-            marginVertical: 10,
-            padding: 10,
-            backgroundColor: "rgba(255, 255, 255, 0.2)",
-            borderRadius: 12,
-            justifyContent: "center",
+            flexDirection: "row",
             alignItems: "center",
+            justifyContent: "space-between",
+            paddingVertical: 14,
+            paddingHorizontal: 5,
+            borderBottomWidth: 1,
+            borderBottomColor: 'rgba(255, 255, 255, 0.2)',
+        },
+        dateContainer: {
+            width: '25%',
+            alignItems: 'flex-start',
         },
         dateText: {
-            fontSize: 16,
-            color: theme.text,
-            marginBottom: 6,
+            fontSize: 18,
+            color: '#FFFFFF',
+            fontWeight: 'bold',
+            marginBottom: 2,
             fontFamily: "Inter_500Medium"
         },
-        dailyWeatherImgContainer: {
-            flexDirection: "row",
-            gap: 30
+        weekdayText: {
+            fontSize: 14,
+            color: '#B3E5FC',
+            fontFamily: "Inter_500Medium"
         },
-        dailyWeatherImg: {
-            width: 30,
-            height: 30,
+        weatherIconContainer: {
+            width: '50%',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingHorizontal: 10,
+        },
+        weatherIcon: {
+            width: 40,
+            height: 40,
             borderRadius: 12,
         },
-        eachItem: {
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: 5,
-            paddingHorizontal: 20,
+        rainProbability: {
+            fontSize: 12,
+            width: 30,
+            textAlign: 'left',
+            color: '#64B5F6',
+            marginLeft: 5,
         },
-        dailyWeatherRow: {
-            flexDirection: "row",
-            justifyContent: "space-around",
-            marginBottom: 10,
+        tempContainer: {
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+            paddingRight: 5,
+        },
+        tempMin: {
+            fontSize: 18,
+            color: '#FFFFFF',
+            marginRight: 15,
+            fontFamily: "Inter_500Medium"
+        },
+        tempMax: {
+            fontSize: 18,
+            color: '#FFFFFF',
+            fontFamily: "Inter_500Medium"
         },
         lifeItem: {
             flexDirection: "column",
@@ -741,84 +667,6 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
         airQualityProgressContainer: {
             marginBottom: 20
         },
-        airQualityProgress: {
-            height: 8,
-            flexDirection: 'row',
-            borderRadius: 4,
-            overflow: 'hidden'
-        },
-        progressSegment: {
-            height: '100%',
-            flex: 1
-        },
-        progressGood: {
-            backgroundColor: '#7EB815'  // 绿色
-        },
-        progressModerate: {
-            backgroundColor: '#D1D50F'  // 黄色
-        },
-        progressLightPolluted: {
-            backgroundColor: '#E69C19'  // 橙色
-        },
-        progressModeratelyPolluted: {
-            backgroundColor: '#CC1119'  // 红色
-        },
-        progressSeverelyPolluted: {
-            backgroundColor: '#710078'  // 紫色
-        },
-        progressExtremelyPolluted: {
-            backgroundColor: '#4A0D1F'  // 褐红色
-        },
-        airQualityDetails: {
-            marginTop: 15,
-            marginHorizontal: 5
-        },
-        pollutantRow: {
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginBottom: 5
-        },
-        airQualityDetailItem: {
-            width: '22%'
-        },
-        airQualityDetailTitle: {
-            fontSize: 14,
-            color: '#888888',
-            marginBottom: 4,
-            textAlign: 'center'
-        },
-        airQualityDetailValue: {
-            fontSize: 20,
-            fontWeight: 'bold',
-            color: '#333333',
-            marginBottom: 5,
-            textAlign: 'center'
-        },
-        pollutantBarContainer: {
-            height: 4,
-            backgroundColor: '#EEEEEE',
-            borderRadius: 2,
-            overflow: 'hidden',
-            marginTop: 2
-        },
-        pollutantBar: {
-            height: '100%',
-            borderRadius: 2,
-            backgroundColor: '#7EB815'
-        },
-        pm25Bar: {
-            width: '40%'  // 固定宽度来匹配图片
-        },
-        pm10Bar: {
-            width: '60%'  // 固定宽度来匹配图片
-        },
-        coBar: {
-            backgroundColor: '#EEEEEE',
-            width: '0%'
-        },
-        so2Bar: {
-            width: '15%'  // 固定宽度来匹配图片
-        },
         airQualityRange: {
             flexDirection: 'row',
             justifyContent: 'space-between',
@@ -828,12 +676,10 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
             fontSize: 12,
             color: '#757575'
         },
-        subscript: {
-            fontSize: 10,
-            lineHeight: 12,
-            textAlignVertical: 'bottom',
-            includeFontPadding: false,
-            marginBottom: 2
+        forecastList: {
+            marginHorizontal: 15,
+            paddingVertical: 0,
+            marginBottom: 15,
         },
     });
 }

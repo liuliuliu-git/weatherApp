@@ -86,7 +86,6 @@ const AQIProgressBar = ({aqi}: { aqi: number }) => {
                     rx={5}
                     fill="url(#aqiGradient)"
                 />
-
                 <AnimatedRect
                     x={aqiLineX}
                     y={10}

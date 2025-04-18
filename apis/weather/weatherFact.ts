@@ -26,8 +26,6 @@ export const getWeatherNow = ({key, location}: WeatherParams) => {
         params: {
             key,
             location,
-            // start:-1,
-            // days:15
         }
     });
 };

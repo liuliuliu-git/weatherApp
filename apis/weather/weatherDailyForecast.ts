@@ -1,5 +1,5 @@
-import { request } from '@/utils/request';
-import { ResType,Location} from "@/apis/shared";
+import {request} from '@/utils/request';
+import {ResType, Location, WeatherParams} from "@/apis/shared";
 //未来15天逐日天气预报和昨日天气
 // 每日天气信息类型
 export type DailyWeather = {
@@ -26,15 +26,15 @@ export type WeatherDailyData = {
     last_update: string; // 最后更新时间
 };
 // 获取每日天气信息的请求函数
-export const getWeatherDaily = ({ key, location }: { key: string, location: string }) => {
-    return request.get<ResType<WeatherDailyData[]>>(`/weather/daily.json`, {
-        params: {
-            key,
-            location,
-            language: 'zh-Hans',
-            unit: 'c',
-            start: -1,
-            days: 15
-        }
-    });
-};
+export const getWeatherDaily = ({key, location, days = 17, start = -1,}: WeatherParams
+    ) => {
+        return request.get<ResType<WeatherDailyData[]>>(`/weather/daily.json`, {
+            params: {
+                key,
+                location,
+                days,
+                start
+            }
+        });
+    }
+;
