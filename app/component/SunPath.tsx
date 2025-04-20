@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
         backgroundColor: "rgba(255, 255, 255, 0.2)",
         justifyContent: "space-evenly",
-        marginHorizontal: 20,
+        marginHorizontal: 15,
         borderRadius: 12,
     },
     svg: {

@@ -9,7 +9,8 @@ import {
     Alert,
     FlatList,
     ScrollView,
-    Dimensions
+    Dimensions,
+    SectionList
 } from "react-native";
 
 import {ThemeContext} from "@/context/ThemeContext";
@@ -40,6 +41,11 @@ import {getLifeSuggestion, SuggestionItem} from "@/apis/life";
 import {AirStation, getAirQuality} from "@/apis/air/airQualityFact";
 import AQIProgressBar from "./component/AQIProgressBar";
 import {getWeekday} from "@/utils/getWeekday";
+import {
+    getWeatherForecast24Hours,
+    HourlyWeather,
+} from "@/apis/weather/weatherForecast24Hours";
+import {Alarm, getWeatherAlarm} from "@/apis/weather/weatherAlarm";
 
 export default function Index() {
     const {location} = useLocationStore();
@@ -50,6 +56,8 @@ export default function Index() {
     const [sunData, setSunData] = useState<SunItem | null>(null);
     const [suggestionLife, setSuggestionLife] = useState<SuggestionItem | null>(null);
     const [airQualityFact, setAirQualityFact] = useState<AirStation | null>(null);
+    const [weatherForecastHourly, setWeatherForecastHourly] = useState<HourlyWeather[] | null>(null);
+    const [weatherAlarm, setWeatherAlarm] = useState<Alarm | null>(null);
     const router = useRouter();
     // const params = {
     //     key: process.env.EXPO_PUBLIC_API_KEY,
@@ -144,6 +152,38 @@ export default function Index() {
 
         fetchData();
     }, [])
+    //获取24小时内天气预报
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const {data} = await getWeatherForecast24Hours({
+                    key: process.env.EXPO_PUBLIC_API_KEY || "",
+                    location: location?.id as string,
+                });
+                setWeatherForecastHourly(data.results[0].hourly);
+            } catch (error) {
+                handleAxiosError(error);
+            }
+        }
+
+        fetchData();
+    }, []);
+    // 气象预警
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const {data} = await getWeatherAlarm({
+                    key: process.env.EXPO_PUBLIC_API_KEY || "",
+                    location: location?.id as string,
+                });
+                setWeatherAlarm(data.results[0].alarms[0]);
+            } catch (error) {
+                handleAxiosError(error);
+            }
+        }
+
+        fetchData();
+    }, []);
     const aqi = useMemo(() => {
         const parsed = parseInt(airQualityFact?.aqi as string);
         return isNaN(parsed) ? 0 : parsed;
@@ -151,77 +191,43 @@ export default function Index() {
     if (!loaded && !error) {
         return null
     }
-    const renderItem = ({item}: { item: DailyWeather }) => {
-        // 提取日期和月份
-        const dateParts = item.date.split('-');
-        const month = dateParts[1];
-        const day = dateParts[2];
 
-        // 降雨概率计算
-        const rainProb = Math.round(parseFloat(item.precip) * 100);
-
-        return (
-            <View style={styles.dailyWeatherItem}>
-                {/* 日期和星期 */}
-                <View style={styles.dateContainer}>
-                    <Text style={styles.dateText}>{`${month}/${day}`}</Text>
-                    <Text style={styles.weekdayText}>
-                        {getWeekday(item.date)}
-                    </Text>
-                </View>
-
-                {/* 天气图标和降雨概率固定宽度容器 */}
-                <View style={styles.weatherIconContainer}>
-                    <Image
-                        source={{uri: getWeatherIconUri(Number(item.code_day), "light")}}
-                        style={styles.weatherIcon}
-                    />
-                    {rainProb > 0 ? (
-                        <Text style={styles.rainProbability}>{rainProb}%</Text>
-                    ) : (
-                        <Text style={[styles.rainProbability, {opacity: 0}]}>0%</Text>
-                    )}
-                </View>
-
-                {/* 温度 */}
-                <View style={styles.tempContainer}>
-                    <View style={styles.tempMinContainer}>
-                        <Text style={styles.tempMin}>{item.low}</Text>
-                    </View>
-                    <View style={styles.tempMaxContainer}>
-                        <Text style={styles.tempMax}>{item.high}</Text>
-                    </View>
-                </View>
-            </View>
-        );
+    // 创建一个渲染不同区块的函数
+    const renderSections = () => {
+        const sections = [
+            {
+                type: 'current',
+                data: [null] // 只需一个占位元素
+            },
+            {
+                type: 'forecast',
+                data: recentWeather || []
+            },
+            {
+                type: 'more',
+                data: [null]
+            },
+            {
+                type: 'sun',
+                data: [null]
+            },
+            {
+                type: 'airQuality',
+                data: [null]
+            },
+            {
+                type: 'suggestions',
+                data: [null]
+            }
+        ];
+        return sections;
     };
-    return (
-        <SafeAreaView style={styles.container}>
-            <ImageBackground blurRadius={50} style={styles.image} source={require("../assets/images/img.png")}>
-                {/* Header */}
-                <View style={styles.headerContainer}>
-                    <View style={styles.headerMain}>
-                        <TouchableOpacity onPress={() => {
-                            router.push("/search")
-                        }} style={{marginTop: 5}}>
-                            <FontAwesome5 name="search-location" size={24} color={theme.text}/>
-                        </TouchableOpacity>
-                        <Text style={styles.cityText}>{location?.name}
-                            <Entypo name="location" size={24} color={theme.text} style={styles.locationIcon}/>
-                        </Text>
-                        <TouchableOpacity onPress={() => {
-                            router.push("/settings");
-                        }} style={{marginTop: 5}}>
-                            <Feather name="more-vertical" size={28} color={theme.text}/>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.headerLine}>
-                    </View>
 
-                </View>
-                <ScrollView showsVerticalScrollIndicator={false}>
-                    {/* 当前天气 */}
-                    <Button title={"press on me "} onPress={() => router.push("/weatherdetail")}/>
+    // 根据section类型渲染不同的区块
+    const renderSection = ({section}: { section: { type: string, data: any[] } }) => {
+        switch (section.type) {
+            case 'current':
+                return (
                     <View style={[styles.weatherMain, styles.weatherMainContainer]}>
                         <View style={styles.weatherMainHead}>
                             <Text style={styles.tempText}>{now?.temperature}</Text>
@@ -243,23 +249,18 @@ export default function Index() {
                             </View>
                         </View>
                     </View>
-                    <View>
-                        <FlatList
-                            horizontal={false}
-                            data={recentWeather}
-                            renderItem={renderItem}
-                            showsVerticalScrollIndicator={false}
-                            scrollEnabled={true}
-                            keyExtractor={(item) => item.date}
-                            style={styles.forecastList}
-                        />
+                );
+            case 'more':
+                return (
+                    <View style={styles.moreWeatherContainer}>
+                        <Text style={styles.moreWeather}
+                              onPress={() => router.push("/weatherdetail")}>查看更多天气 {">"}</Text>
                     </View>
-                    <View>
-                        <View style={styles.lifeItem}></View>
-                    </View>
-                    {/*日出日落*/}
-                    <SunPath sunrise={sunData?.sunrise as string} sunset={sunData?.sunset as string}/>
-                    {/*空气质量实况*/}
+                );
+            case 'sun':
+                return <SunPath sunrise={sunData?.sunrise as string} sunset={sunData?.sunset as string}/>;
+            case 'airQuality':
+                return (
                     <View style={styles.airQualityContainer}>
                         <View style={styles.airQualityCard}>
                             <View style={styles.airQualityHeader}>
@@ -280,8 +281,9 @@ export default function Index() {
                             </View>
                         </View>
                     </View>
-
-                    {/*生活建议*/}
+                );
+            case 'suggestions':
+                return (
                     <View style={styles.suggestionContainer}>
                         <View style={styles.suggestionGrid}>
                             {/* 晾晒 */}
@@ -373,14 +375,97 @@ export default function Index() {
                             </View>
                         </View>
                     </View>
+                );
+            default:
+                return null;
+        }
+    };
 
-                    <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'}/>
-                </ScrollView>
+    const renderItem = ({item, section}: { item: any, section: { type: string } }) => {
+        if (section.type === 'forecast') {
+            // 原来的renderItem逻辑
+            // 提取日期和月份
+            const dateParts = item.date.split('-');
+            const month = dateParts[1];
+            const day = dateParts[2];
 
+            // 降雨概率计算
+            const rainProb = Math.round(parseFloat(item.precip) * 100);
+
+            return (
+                <View style={styles.dailyWeatherItem}>
+                    {/* 日期和星期 */}
+                    <View style={styles.dateContainer}>
+                        <Text style={styles.dateText}>{`${month}/${day}`}</Text>
+                        <Text style={styles.weekdayText}>
+                            {getWeekday(item.date)}
+                        </Text>
+                    </View>
+
+                    {/* 天气图标和降雨概率固定宽度容器 */}
+                    <View style={styles.weatherIconContainer}>
+                        <Image
+                            source={{uri: getWeatherIconUri(Number(item.code_day), "light")}}
+                            style={styles.weatherIcon}
+                        />
+                        {rainProb > 0 ? (
+                            <Text style={styles.rainProbability}>{rainProb}%</Text>
+                        ) : (
+                            <Text style={[styles.rainProbability, {opacity: 0}]}>0%</Text>
+                        )}
+                    </View>
+
+                    {/* 温度 */}
+                    <View style={styles.tempContainer}>
+                        <View style={styles.tempMinContainer}>
+                            <Text style={styles.tempMin}>{item.low}</Text>
+                        </View>
+                        <View style={styles.tempMaxContainer}>
+                            <Text style={styles.tempMax}>{item.high}</Text>
+                        </View>
+                    </View>
+                </View>
+            );
+        }
+        return null;
+    };
+
+    return (
+        <SafeAreaView style={styles.container}>
+            <ImageBackground blurRadius={50} style={styles.image} source={require("../assets/images/img.png")}>
+                {/* Header */}
+                <View style={styles.headerContainer}>
+                    <View style={styles.headerMain}>
+                        <TouchableOpacity onPress={() => {
+                            router.push("/search")
+                        }} style={{marginTop: 5}}>
+                            <FontAwesome5 name="search-location" size={24} color={theme.text}/>
+                        </TouchableOpacity>
+                        <Text style={styles.cityText}>{location?.name}
+                            <Entypo name="location" size={24} color={theme.text} style={styles.locationIcon}/>
+                        </Text>
+                        <TouchableOpacity onPress={() => {
+                            router.push("/settings");
+                        }} style={{marginTop: 5}}>
+                            <Feather name="more-vertical" size={28} color={theme.text}/>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.headerLine}>
+                    </View>
+                </View>
+
+                <SectionList
+                    sections={renderSections()}
+                    keyExtractor={(item, index) => item + index}
+                    renderItem={renderItem}
+                    renderSectionHeader={renderSection}
+                    stickySectionHeadersEnabled={false}
+                    showsVerticalScrollIndicator={false}
+                />
+
+                <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'}/>
             </ImageBackground>
-
         </SafeAreaView>
-
     );
 }
 
@@ -448,9 +533,9 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
             alignItems: "center",
             justifyContent: "space-between",
             paddingVertical: 14,
-            paddingHorizontal: 5,
             borderBottomWidth: 1,
             borderBottomColor: 'rgba(255, 255, 255, 0.2)',
+            marginHorizontal: 20,
         },
         dateContainer: {
             width: '25%',
@@ -513,9 +598,6 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
             color: '#FFFFFF',
             fontFamily: "monospace",
             textAlign: "center"
-        },
-        lifeItem: {
-            flexDirection: "column",
         },
         weatherMainHead: {
             flexDirection: "row",
@@ -698,5 +780,21 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
             paddingVertical: 0,
             marginBottom: 15,
         },
+        moreWeatherContainer: {
+            alignItems: "center",
+            justifyContent: "center",
+            paddingVertical: 10,
+
+        },
+        moreWeather: {
+            fontSize: 16,
+            color: "#666",
+            fontWeight: "500",
+            paddingHorizontal: 20,
+            paddingVertical: 8,
+            backgroundColor: "rgba(255, 255, 255, 0.5)",
+            borderRadius: 20,
+            overflow: "hidden",
+        }
     });
 }
