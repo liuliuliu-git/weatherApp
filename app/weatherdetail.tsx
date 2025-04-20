@@ -5,7 +5,7 @@ import {Ionicons, MaterialCommunityIcons, MaterialIcons} from "@expo/vector-icon
 import {ColorScheme, Theme} from "@/types";
 import {grayColor} from "@/constants/Colors";
 import {ThemeContext} from "@/context/ThemeContext";
-import {handleAxiosError} from "@/utils/handleAxiosError";
+import {handleAxiosError} from "@/utils/index";
 import {useLocationStore} from "@/stores/useLocationStore";
 
 export default function Search() {

@@ -27,25 +27,30 @@ import {
 } from '@expo/vector-icons';
 import {getWeatherNow, WeatherNow} from "@/apis/weather/weatherFact";
 import {useRouter} from "expo-router";
-import {getWeatherIconUri} from "@/utils/getWeatherIconUri";
 import {DailyWeather, getWeatherDaily} from "@/apis/weather/weatherDailyForecast";
 import {Inter_500Medium, useFonts} from "@expo-google-fonts/inter";
 import {ColorScheme, Theme} from "@/types";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {useLocationStore} from "@/stores/useLocationStore";
-import {handleAxiosError} from "@/utils/handleAxiosError";
 import SunPath from "@/app/component/SunPath";
 import {getSunData, SunItem} from "@/apis/geo/sun";
-import {grayColor} from "@/constants/Colors";
+import {grayColor, alarmColors} from "@/constants/Colors";
 import {getLifeSuggestion, SuggestionItem} from "@/apis/life";
-import {AirStation, getAirQuality} from "@/apis/air/airQualityFact";
+import {getAirQuality, AirStation} from "@/apis/air/airQualityFact";
 import AQIProgressBar from "./component/AQIProgressBar";
-import {getWeekday} from "@/utils/getWeekday";
 import {
     getWeatherForecast24Hours,
     HourlyWeather,
 } from "@/apis/weather/weatherForecast24Hours";
 import {Alarm, getWeatherAlarm} from "@/apis/weather/weatherAlarm";
+import { 
+    getAlarmIconInfo, 
+    getAlarmLevelStyle, 
+    getAlarmLevelIconStyle,
+    getWeatherIconUri,
+    getWeekday,
+    handleAxiosError
+} from '@/utils';
 
 export default function Index() {
     const {location} = useLocationStore();
@@ -248,6 +253,19 @@ export default function Index() {
                                 <Text style={styles.tempRangeText}>{recentWeather?.[0]?.high}°C</Text>
                             </View>
                         </View>
+                        
+                        {/* 气象灾害预警信息 */}
+                        {weatherAlarm && (
+                            <TouchableOpacity style={[styles.weatherAlarmContainer, getAlarmLevelStyle(weatherAlarm.level)]}>
+                                <View style={[styles.weatherAlarmIconContainer, getAlarmLevelIconStyle(weatherAlarm.level)]}>
+                                    {renderAlarmIcon(weatherAlarm.type)}
+                                </View>
+                                <Text style={styles.weatherAlarmText} numberOfLines={1} ellipsizeMode="tail">
+                                    {weatherAlarm.type}{weatherAlarm.level}预警: {weatherAlarm.title}
+                                </Text>
+                                <Feather name="chevron-right" size={16} color="#fff" />
+                            </TouchableOpacity>
+                        )}
                     </View>
                 );
             case 'more':
@@ -430,6 +448,24 @@ export default function Index() {
         return null;
     };
 
+    // 渲染预警图标
+    const renderAlarmIcon = (alarmType: string) => {
+        const iconInfo = getAlarmIconInfo(alarmType);
+        
+        switch (iconInfo.iconType) {
+            case 'ionicons':
+                return <Ionicons name={iconInfo.iconName as any} size={18} color="#fff" />;
+            case 'material':
+                return <MaterialIcons name={iconInfo.iconName as any} size={18} color="#fff" />;
+            case 'material-community':
+                return <MaterialCommunityIcons name={iconInfo.iconName as any} size={18} color="#fff" />;
+            case 'feather':
+                return <Feather name={iconInfo.iconName as any} size={18} color="#fff" />;
+            default:
+                return <MaterialIcons name="warning" size={18} color="#fff" />;
+        }
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <ImageBackground blurRadius={50} style={styles.image} source={require("../assets/images/img.png")}>
@@ -456,7 +492,11 @@ export default function Index() {
 
                 <SectionList
                     sections={renderSections()}
-                    keyExtractor={(item, index) => item + index}
+                    keyExtractor={(item, index) => {
+                        if (item === null) return `null-${index}`;
+                        if (typeof item === 'object' && 'date' in item) return item.date;
+                        return `item-${index}`;
+                    }}
                     renderItem={renderItem}
                     renderSectionHeader={renderSection}
                     stickySectionHeadersEnabled={false}
@@ -795,6 +835,65 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
             backgroundColor: "rgba(255, 255, 255, 0.5)",
             borderRadius: 20,
             overflow: "hidden",
-        }
+        },
+        // 气象灾害预警样式
+        weatherAlarmContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            borderRadius: 20,
+            paddingVertical: 8,
+            paddingHorizontal: 12,
+            marginTop: 15,
+            width: '100%',
+            maxWidth: 350,
+        },
+        weatherAlarmIconContainer: {
+            borderRadius: 12,
+            width: 24,
+            height: 24,
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginRight: 8,
+        },
+        weatherAlarmText: {
+            color: '#fff',
+            fontSize: 14,
+            flex: 1,
+            marginRight: 8,
+            fontWeight: '500',
+        },
+        // 不同预警等级的容器样式
+        redAlarmContainer: {
+            backgroundColor: alarmColors.red.background,
+        },
+        orangeAlarmContainer: {
+            backgroundColor: alarmColors.orange.background,
+        },
+        yellowAlarmContainer: {
+            backgroundColor: alarmColors.yellow.background,
+        },
+        blueAlarmContainer: {
+            backgroundColor: alarmColors.blue.background,
+        },
+        defaultAlarmContainer: {
+            backgroundColor: alarmColors.default.background,
+        },
+        
+        // 不同预警等级的图标容器样式
+        redAlarmIconContainer: {
+            backgroundColor: alarmColors.red.icon,
+        },
+        orangeAlarmIconContainer: {
+            backgroundColor: alarmColors.orange.icon,
+        },
+        yellowAlarmIconContainer: {
+            backgroundColor: alarmColors.yellow.icon,
+        },
+        blueAlarmIconContainer: {
+            backgroundColor: alarmColors.blue.icon,
+        },
+        defaultAlarmIconContainer: {
+            backgroundColor: alarmColors.default.icon,
+        },
     });
 }

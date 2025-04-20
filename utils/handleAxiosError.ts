@@ -1,8 +1,8 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import Toast from 'react-native-toast-message';
 
 // 错误处理函数
-export const handleAxiosError = (error) => {
+export const handleAxiosError = (error: unknown) => {
     if (axios.isAxiosError(error)) {
         // 获取状态码和错误信息
         const status = error?.response?.status || null;
