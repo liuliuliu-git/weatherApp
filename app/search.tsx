@@ -37,7 +37,7 @@ export default function Search() {
         try {
             setLoading(true);
             const {data} = await searchCity({
-                key: process.env.EXPO_PUBLIC_API_KEY,
+                key: process.env.EXPO_PUBLIC_API_KEY || '',
                 location: query,
             });
             let resFilter = data.results.filter((item) => {

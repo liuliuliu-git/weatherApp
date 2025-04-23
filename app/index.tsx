@@ -51,6 +51,7 @@ import {
     getWeekday,
     handleAxiosError
 } from '@/utils';
+import SunPathWebView from "@/app/component/SunPathWebView";
 
 export default function Index() {
     const {location} = useLocationStore();
@@ -276,14 +277,15 @@ export default function Index() {
                     </View>
                 );
             case 'sun':
-                return <SunPath sunrise={sunData?.sunrise as string} sunset={sunData?.sunset as string}/>;
+                return <SunPathWebView sunrise={sunData?.sunrise as string} sunset={sunData?.sunset as string} />
+
             case 'airQuality':
                 return (
                     <View style={styles.airQualityContainer}>
                         <View style={styles.airQualityCard}>
                             <View style={styles.airQualityHeader}>
                                 <View style={styles.airQualityValue}>
-                                    <Text style={styles.airQualityNumber}>空气质量指数 {airQualityFact?.quality}</Text>
+                                    <Text style={styles.airQualityNumber}>空气质量指数</Text>
                                 </View>
                                 <TouchableOpacity style={styles.airQualityMore}>
                                     <Text style={styles.airQualityMoreText}>查看详情</Text>

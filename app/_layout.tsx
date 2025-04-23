@@ -37,6 +37,8 @@ export default function RootLayout() {
                         backgroundColor: '#fff', // 可选：设置背景颜色
                     },
                 }}/>
+                {/* 气象灾害页 */}
+                <Stack.Screen name="weatherDisaster" options={{title: "气象灾害"}}/>
                 {/* 404 页面 */}
                 <Stack.Screen name="+not-found"/>
 

@@ -1,13 +1,14 @@
 import {request} from "@/utils/request";
-import { 
-    getAlarmIconInfo, 
-    getAlarmLevelStyle, 
+import {
+    getAlarmIconInfo,
+    getAlarmLevelStyle,
     getAlarmLevelIconStyle,
-    getAlarmLevelDescription 
+    getAlarmLevelDescription
 } from '@/utils/getAlarmUtils';
-import { getWeatherIconUri } from '@/utils/getWeatherIconUri';
-import { getWeekday } from '@/utils/getWeekday';
-import { handleAxiosError } from '@/utils/handleAxiosError';
+import {getCurrentTime, timeToAngle} from '@/utils/getCurrentTime';
+import {getWeatherIconUri} from '@/utils/getWeatherIconUri';
+import {getWeekday} from '@/utils/getWeekday';
+import {handleAxiosError} from '@/utils/handleAxiosError';
 
 export {
     request,
@@ -17,5 +18,7 @@ export {
     getAlarmLevelDescription,
     getWeatherIconUri,
     getWeekday,
-    handleAxiosError
+    handleAxiosError,
+    getCurrentTime,
+    timeToAngle
 }
