@@ -5,7 +5,7 @@ import {
     getAlarmLevelIconStyle,
     getAlarmLevelDescription
 } from '@/utils/getAlarmUtils';
-import {getCurrentTime, timeToAngle} from '@/utils/getCurrentTime';
+import {formatTime, getCurrentTime, timeToAngle} from '@/utils/getCurrentTime';
 import {getWeatherIconUri} from '@/utils/getWeatherIconUri';
 import {getWeekday} from '@/utils/getWeekday';
 import {handleAxiosError} from '@/utils/handleAxiosError';
@@ -20,5 +20,6 @@ export {
     getWeekday,
     handleAxiosError,
     getCurrentTime,
-    timeToAngle
+    timeToAngle,
+    formatTime
 }

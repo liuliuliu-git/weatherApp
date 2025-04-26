@@ -32,7 +32,6 @@ import {Inter_500Medium, useFonts} from "@expo-google-fonts/inter";
 import {ColorScheme, Theme} from "@/types";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {useLocationStore} from "@/stores/useLocationStore";
-import SunPath from "@/app/component/SunPath";
 import {getSunData, SunItem} from "@/apis/geo/sun";
 import {grayColor, alarmColors} from "@/constants/Colors";
 import {getLifeSuggestion, SuggestionItem} from "@/apis/life";
@@ -43,16 +42,16 @@ import {
     HourlyWeather,
 } from "@/apis/weather/weatherForecast24Hours";
 import {Alarm, getWeatherAlarm} from "@/apis/weather/weatherAlarm";
-import { 
-    getAlarmIconInfo, 
-    getAlarmLevelStyle, 
+import {
+    getAlarmIconInfo,
+    getAlarmLevelStyle,
     getAlarmLevelIconStyle,
     getWeatherIconUri,
     getWeekday,
     handleAxiosError
 } from '@/utils';
 import SunPathWebView from "@/app/component/SunPathWebView";
-
+import HourlyWeatherCpn from "@/app/component/HourlyWeatherCpn";
 export default function Index() {
     const {location} = useLocationStore();
     const {colorScheme, theme} = useContext(ThemeContext);
@@ -206,6 +205,10 @@ export default function Index() {
                 data: [null] // 只需一个占位元素
             },
             {
+                type: 'hourlyWeather',
+                data: [null]
+            },
+            {
                 type: 'forecast',
                 data: recentWeather || []
             },
@@ -254,21 +257,25 @@ export default function Index() {
                                 <Text style={styles.tempRangeText}>{recentWeather?.[0]?.high}°C</Text>
                             </View>
                         </View>
-                        
+
                         {/* 气象灾害预警信息 */}
                         {weatherAlarm && (
-                            <TouchableOpacity style={[styles.weatherAlarmContainer, getAlarmLevelStyle(weatherAlarm.level)]}>
-                                <View style={[styles.weatherAlarmIconContainer, getAlarmLevelIconStyle(weatherAlarm.level)]}>
+                            <TouchableOpacity
+                                style={[styles.weatherAlarmContainer, getAlarmLevelStyle(weatherAlarm.level)]}>
+                                <View
+                                    style={[styles.weatherAlarmIconContainer, getAlarmLevelIconStyle(weatherAlarm.level)]}>
                                     {renderAlarmIcon(weatherAlarm.type)}
                                 </View>
                                 <Text style={styles.weatherAlarmText} numberOfLines={1} ellipsizeMode="tail">
                                     {weatherAlarm.type}{weatherAlarm.level}预警: {weatherAlarm.title}
                                 </Text>
-                                <Feather name="chevron-right" size={16} color="#fff" />
+                                <Feather name="chevron-right" size={16} color="#fff"/>
                             </TouchableOpacity>
                         )}
                     </View>
                 );
+            case 'hourlyWeather':
+                return <HourlyWeatherCpn data={weatherForecastHourly as HourlyWeather[]}></HourlyWeatherCpn>
             case 'more':
                 return (
                     <View style={styles.moreWeatherContainer}>
@@ -277,7 +284,7 @@ export default function Index() {
                     </View>
                 );
             case 'sun':
-                return <SunPathWebView sunrise={sunData?.sunrise as string} sunset={sunData?.sunset as string} />
+                return <SunPathWebView sunrise={sunData?.sunrise as string} sunset={sunData?.sunset as string}/>
 
             case 'airQuality':
                 return (
@@ -453,18 +460,18 @@ export default function Index() {
     // 渲染预警图标
     const renderAlarmIcon = (alarmType: string) => {
         const iconInfo = getAlarmIconInfo(alarmType);
-        
+
         switch (iconInfo.iconType) {
             case 'ionicons':
-                return <Ionicons name={iconInfo.iconName as any} size={18} color="#fff" />;
+                return <Ionicons name={iconInfo.iconName as any} size={18} color="#fff"/>;
             case 'material':
-                return <MaterialIcons name={iconInfo.iconName as any} size={18} color="#fff" />;
+                return <MaterialIcons name={iconInfo.iconName as any} size={18} color="#fff"/>;
             case 'material-community':
-                return <MaterialCommunityIcons name={iconInfo.iconName as any} size={18} color="#fff" />;
+                return <MaterialCommunityIcons name={iconInfo.iconName as any} size={18} color="#fff"/>;
             case 'feather':
-                return <Feather name={iconInfo.iconName as any} size={18} color="#fff" />;
+                return <Feather name={iconInfo.iconName as any} size={18} color="#fff"/>;
             default:
-                return <MaterialIcons name="warning" size={18} color="#fff" />;
+                return <MaterialIcons name="warning" size={18} color="#fff"/>;
         }
     };
 
@@ -834,7 +841,6 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
             fontWeight: "500",
             paddingHorizontal: 20,
             paddingVertical: 8,
-            backgroundColor: "rgba(255, 255, 255, 0.5)",
             borderRadius: 20,
             overflow: "hidden",
         },
@@ -880,7 +886,7 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
         defaultAlarmContainer: {
             backgroundColor: alarmColors.default.background,
         },
-        
+
         // 不同预警等级的图标容器样式
         redAlarmIconContainer: {
             backgroundColor: alarmColors.red.icon,

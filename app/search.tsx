@@ -69,7 +69,7 @@ export default function Search() {
         <View style={styles.container}>
             <TextInput
                 style={styles.input}
-                placeholder="请输入城市名称(限地级市)"
+                placeholder="请输入城市名称"
                 value={query}
                 onChangeText={setQuery}
             />

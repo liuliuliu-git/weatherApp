@@ -42,3 +42,10 @@ export const timeToAngle = (time: string, sunrise: string, sunset: string) => {
         return 0;
     }
 };
+// 格式化时间，只取小时
+export const formatTime = (timeString: string) => {
+    const date = new Date(timeString);
+    const hours = date.getHours().toString().padStart(2, '0');
+    return `${hours}:00`;
+};
+
