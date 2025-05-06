@@ -261,15 +261,17 @@ export default function Index() {
                         {/* 气象灾害预警信息 */}
                         {weatherAlarm && (
                             <TouchableOpacity
-                                style={[styles.weatherAlarmContainer, getAlarmLevelStyle(weatherAlarm.level)]}>
+                                style={[styles.weatherAlarmContainer, getAlarmLevelStyle(weatherAlarm.level)]}
+                                onPress={() => router.push('/weatherDisaster')}
+                            >
                                 <View
                                     style={[styles.weatherAlarmIconContainer, getAlarmLevelIconStyle(weatherAlarm.level)]}>
                                     {renderAlarmIcon(weatherAlarm.type)}
                                 </View>
                                 <Text style={styles.weatherAlarmText} numberOfLines={1} ellipsizeMode="tail">
-                                    {weatherAlarm.type}{weatherAlarm.level}预警: {weatherAlarm.title}
+                                    {weatherAlarm.type}{weatherAlarm.level}预警
                                 </Text>
-                                <Feather name="chevron-right" size={16} color="#fff"/>
+                                <Feather name="chevron-right" size={16} color="#fff" style={{marginTop:3}}/>
                             </TouchableOpacity>
                         )}
                     </View>
@@ -582,8 +584,6 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
             alignItems: "center",
             justifyContent: "space-between",
             paddingVertical: 14,
-            borderBottomWidth: 1,
-            borderBottomColor: 'rgba(255, 255, 255, 0.2)',
             marginHorizontal: 20,
         },
         dateContainer: {
@@ -852,7 +852,7 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
             paddingVertical: 8,
             paddingHorizontal: 12,
             marginTop: 15,
-            width: '100%',
+            width: '50%',
             maxWidth: 350,
         },
         weatherAlarmIconContainer: {

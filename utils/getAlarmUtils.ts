@@ -42,24 +42,28 @@ export const getAlarmIconInfo = (alarmType: string): { iconName: string; iconTyp
     }
 };
 
+const getStyleByLevel = (level: string, colorType: 'background' | 'icon'): StyleProp<ViewStyle> => {
+    switch (level) {
+        case '红色':
+            return { backgroundColor: alarmColors.red[colorType] };
+        case '橙色':
+            return { backgroundColor: alarmColors.orange[colorType] };
+        case '黄色':
+            return { backgroundColor: alarmColors.yellow[colorType] };
+        case '蓝色':
+            return { backgroundColor: alarmColors.blue[colorType] };
+        default:
+            return { backgroundColor: alarmColors.default[colorType] };
+    }
+};
+
 /**
  * 根据预警等级获取对应的容器样式
  * @param level 预警等级（如"红色"、"橙色"等）
  * @returns 返回对应的样式对象
  */
 export const getAlarmLevelStyle = (level: string): StyleProp<ViewStyle> => {
-    switch (level) {
-        case '红色':
-            return { backgroundColor: alarmColors.red.background };
-        case '橙色':
-            return { backgroundColor: alarmColors.orange.background };
-        case '黄色':
-            return { backgroundColor: alarmColors.yellow.background };
-        case '蓝色':
-            return { backgroundColor: alarmColors.blue.background };
-        default:
-            return { backgroundColor: alarmColors.default.background };
-    }
+    return getStyleByLevel(level, 'background');
 };
 
 /**
@@ -68,18 +72,7 @@ export const getAlarmLevelStyle = (level: string): StyleProp<ViewStyle> => {
  * @returns 返回对应的样式对象
  */
 export const getAlarmLevelIconStyle = (level: string): StyleProp<ViewStyle> => {
-    switch (level) {
-        case '红色':
-            return { backgroundColor: alarmColors.red.icon };
-        case '橙色':
-            return { backgroundColor: alarmColors.orange.icon };
-        case '黄色':
-            return { backgroundColor: alarmColors.yellow.icon };
-        case '蓝色':
-            return { backgroundColor: alarmColors.blue.icon };
-        default:
-            return { backgroundColor: alarmColors.default.icon };
-    }
+    return getStyleByLevel(level, 'icon');
 };
 
 /**
@@ -100,4 +93,4 @@ export const getAlarmLevelDescription = (level: string): string => {
         default:
             return '未知级别';
     }
-}; 
+};
