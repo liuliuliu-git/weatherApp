@@ -1,18 +1,19 @@
 import {View, Text, Image, StyleSheet} from "react-native";
-import {TabViewCpnProps} from "@/app/component/TabViewCpn";
+import {TabViewCpnProps} from "@/components/TabViewCpn";
 
-export default function LiveTab( {data}: TabViewCpnProps) {
+export default function DailyTab({data}: TabViewCpnProps) {
 
     return <View style={styles.container}>
-        <Text>实况</Text>
+        <Text>单日</Text>
     </View>
+
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        marginTop: 20
+        marginTop:20
     },
 
 });

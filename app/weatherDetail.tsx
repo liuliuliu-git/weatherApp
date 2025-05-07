@@ -3,7 +3,7 @@ import {useContext} from "react";
 import {ColorScheme, Theme} from "@/types";
 import {ThemeContext} from "@/context/ThemeContext";
 import {useLocationStore} from "@/stores/useLocationStore";
-import TabViewCpn from "@/app/component/TabViewCpn";
+import TabViewCpn from "@/components/TabViewCpn";
 
 
 export default function WeatherDetail() {

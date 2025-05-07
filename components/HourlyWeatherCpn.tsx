@@ -1,14 +1,17 @@
-import React from 'react';
-import { ScrollView, View, Text, StyleSheet, Image } from 'react-native';
+import React, { useState } from 'react';
+import { ScrollView, View, Text, StyleSheet, Image, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
 import Svg, { Path, Circle } from 'react-native-svg';
 import { formatTime, getWeatherIconUri } from '@/utils';
 import { HourlyWeather } from '@/apis/weather/weatherForecast24Hours';
+import { Text as SvgText } from 'react-native-svg';
 
 type HourlyWeatherProps = {
     data: HourlyWeather[];
 };
 
 export default function HourlyWeatherCpn({ data }: HourlyWeatherProps) {
+    const [currentIndex, setCurrentIndex] = useState(0);
+
     const widthPerItem = 60;
     const chartHeight = 100;
     const padding = 20;
@@ -51,6 +54,20 @@ export default function HourlyWeatherCpn({ data }: HourlyWeatherProps) {
     const points = data.map((_, i) => getPoint(i));
     const bezierPath = catmullRom2bezier(points);
 
+    const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+        const offsetX = e.nativeEvent.contentOffset.x;
+        // 计算实际可滚动的最大宽度
+        const maxScrollWidth = (data.length * widthPerItem) - widthPerItem;
+        // 确保 offsetX 不会超过最大可滚动宽度
+        const clampedOffsetX = Math.min(offsetX, maxScrollWidth);
+        // 计算滚动进度，范围在 0 到 1 之间
+        const scrollProgress = clampedOffsetX / maxScrollWidth;
+        // 根据滚动进度计算新的索引，确保索引在有效范围内
+        const newIndex = Math.min(Math.max(Math.round(scrollProgress * (data.length - 1)), 0), data.length - 1);
+        setCurrentIndex(newIndex);
+    };
+
+
     return (
         <ScrollView
             horizontal
@@ -58,23 +75,46 @@ export default function HourlyWeatherCpn({ data }: HourlyWeatherProps) {
             style={styles.container}
             snapToInterval={widthPerItem}
             decelerationRate="fast"
-            contentContainerStyle={{ paddingHorizontal: 10 }}
+            contentContainerStyle={{
+                paddingHorizontal: 10,
+                width: data.length * widthPerItem + 20,  // 包含左右边距，确保滚动区域够大
+            }}
+            scrollEventThrottle={16}
+            snapToAlignment="start"
+            onScroll={handleScroll}
         >
             <View style={{ width: data.length * widthPerItem }}>
                 <Svg
                     height={chartHeight + 30}
                     width={data.length * widthPerItem}
-                    style={{ marginBottom: 10 }}
-                >
+                    style={{ marginBottom: 10 }}>
                     <Path
                         d={bezierPath}
                         fill="none"
                         stroke="#4fc3f7"
                         strokeWidth={2}
                     />
-                    {points.map((p, index) => (
-                        <Circle key={index} cx={p.x} cy={p.y} r={3} fill="#4fc3f7" />
-                    ))}
+                    {/* 绘制温度球 */}
+                    {points[currentIndex] && (
+                        <>
+                            <Circle
+                                cx={points[currentIndex].x}
+                                cy={points[currentIndex].y}
+                                r={10}
+                                fill="#4fc3f7"
+                            />
+                            <SvgText
+                                x={points[currentIndex].x}
+                                y={points[currentIndex].y + 4} // 微调居中
+                                fontSize="10"
+                                fill="#fff"
+                                fontWeight="bold"
+                                textAnchor="middle"
+                            >
+                                {data[currentIndex].temperature}
+                            </SvgText>
+                        </>
+                    )}
                 </Svg>
 
                 <View style={styles.row}>
@@ -85,7 +125,6 @@ export default function HourlyWeatherCpn({ data }: HourlyWeatherProps) {
                                 source={{ uri: getWeatherIconUri(Number(item.code), 'light') }}
                                 style={styles.weatherIcon}
                             />
-                            <Text style={styles.temp}>{item.temperature}°</Text>
                         </View>
                     ))}
                 </View>
@@ -93,6 +132,7 @@ export default function HourlyWeatherCpn({ data }: HourlyWeatherProps) {
         </ScrollView>
     );
 }
+
 
 const styles = StyleSheet.create({
     container: {
@@ -113,6 +153,7 @@ const styles = StyleSheet.create({
         width: 30,
         height: 30,
         marginVertical: 5,
+        borderRadius: 10
     },
     temp: {
         fontSize: 16,
@@ -121,3 +162,18 @@ const styles = StyleSheet.create({
         marginTop: 5,
     },
 });
+
+function TextInSvg({x, y, text}: { x: number; y: number; text: string }) {
+    return (
+        <SvgText
+            x={x}
+            y={y + 4} // 微调一点，字体通常偏上
+            fontSize="10"
+            fill="#fff"
+            fontWeight="bold"
+            textAnchor="middle"
+        >
+            {text}
+        </SvgText>
+    );
+}

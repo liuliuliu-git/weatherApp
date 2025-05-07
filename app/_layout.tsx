@@ -59,9 +59,6 @@ export default function RootLayout() {
                         backgroundColor: '#fff', // 可选：设置背景颜色
                     },
                 }}/>
-                {/* 404 页面 */}
-                <Stack.Screen name="+not-found"/>
-
             </Stack>
             <Toast/>
         </SafeAreaProvider>

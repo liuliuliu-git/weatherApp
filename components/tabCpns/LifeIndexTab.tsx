@@ -1,10 +1,10 @@
 import {View, Text, Image, StyleSheet} from "react-native";
-import {TabViewCpnProps} from "@/app/component/TabViewCpn";
+import {TabViewCpnProps} from "@/components/TabViewCpn";
 
-export default function HourlyTab({data}: TabViewCpnProps) {
+export default function LifeIndexTab({data}: TabViewCpnProps) {
 
     return <View style={styles.container}>
-        <Text>逐小时内容</Text>
+        <Text>生活指数</Text>
     </View>
 
 }

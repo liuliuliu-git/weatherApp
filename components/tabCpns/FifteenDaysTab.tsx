@@ -1,5 +1,5 @@
 import {View, Text, Image, StyleSheet} from "react-native";
-import {TabViewCpnProps} from "@/app/component/TabViewCpn";
+import {TabViewCpnProps} from "@/components/TabViewCpn";
 
 export default function FifteenDaysTab({data}: TabViewCpnProps) {
 

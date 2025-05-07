@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import {TabView, TabBar} from 'react-native-tab-view';
-import LiveTab from "@/app/component/tabCpns/LiveTab";
-import HourlyTab from "@/app/component/tabCpns/HourlyTab";
-import DailyTab from "@/app/component/tabCpns/DailyTab";
-import FifteenDaysTab from "@/app/component/tabCpns/FifteenDaysTab";
-import LifeIndexTab from "@/app/component/tabCpns/LifeIndexTab";
-import AirQualityTab from "@/app/component/tabCpns/AirQualityTab";
+import LiveTab from "@/components/tabCpns/LiveTab";
+import HourlyTab from "@/components/tabCpns/HourlyTab";
+import DailyTab from "@/components/tabCpns/DailyTab";
+import FifteenDaysTab from "@/components/tabCpns/FifteenDaysTab";
+import LifeIndexTab from "@/components/tabCpns/LifeIndexTab";
+import AirQualityTab from "@/components/tabCpns/AirQualityTab";
 
 // 初始布局配置
 const initialLayout = {width: Dimensions.get('window').width};

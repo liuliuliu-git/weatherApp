@@ -36,7 +36,7 @@ import {getSunData, SunItem} from "@/apis/geo/sun";
 import {grayColor, alarmColors} from "@/constants/Colors";
 import {getLifeSuggestion, SuggestionItem} from "@/apis/life";
 import {getAirQuality, AirStation} from "@/apis/air/airQualityFact";
-import AQIProgressBar from "./component/AQIProgressBar";
+import AQIProgressBar from "../components/AQIProgressBar";
 import {
     getWeatherForecast24Hours,
     HourlyWeather,
@@ -50,8 +50,8 @@ import {
     getWeekday,
     handleAxiosError
 } from '@/utils';
-import SunPathWebView from "@/app/component/SunPathWebView";
-import HourlyWeatherCpn from "@/app/component/HourlyWeatherCpn";
+import SunPathWebView from "@/components/SunPathWebView";
+import HourlyWeatherCpn from "@/components/HourlyWeatherCpn";
 export default function Index() {
     const {location} = useLocationStore();
     const {colorScheme, theme} = useContext(ThemeContext);

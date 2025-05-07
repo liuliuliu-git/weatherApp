@@ -1,10 +1,10 @@
 import {View, Text, Image, StyleSheet} from "react-native";
-import {TabViewCpnProps} from "@/app/component/TabViewCpn";
+import {TabViewCpnProps} from "@/components/TabViewCpn";
 
-export default function DailyTab({data}: TabViewCpnProps) {
+export default function AirQualityTab({data}: TabViewCpnProps) {
 
     return <View style={styles.container}>
-        <Text>单日</Text>
+        <Text>空气质量</Text>
     </View>
 
 }

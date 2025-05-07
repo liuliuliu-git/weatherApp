@@ -1,8 +1,5 @@
 import {request} from '@/utils/request';
 import {ResType, Location, WeatherParams} from "@/apis/shared";
-import {cache} from "@babel/traverse";
-import scope = cache.scope;
-
 // 定义城市空气质量历史记录数据类型
 export type AirQualityHourly = {
     city: {
