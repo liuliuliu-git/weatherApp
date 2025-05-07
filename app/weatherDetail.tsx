@@ -1,15 +1,15 @@
 import {View, Text, Image, StyleSheet} from "react-native";
 import {useContext, useEffect, useState} from "react";
 import {getLifeSuggestion, SuggestionItem} from "@/apis/life";
-import {Ionicons, MaterialCommunityIcons, MaterialIcons} from "@expo/vector-icons";
 import {ColorScheme, Theme} from "@/types";
-import {grayColor} from "@/constants/Colors";
 import {ThemeContext} from "@/context/ThemeContext";
-import {handleAxiosError} from "@/utils/index";
+import {handleAxiosError} from "@/utils";
 import {useLocationStore} from "@/stores/useLocationStore";
+import TabViewCpn from "@/app/component/TabViewCpn";
 
-export default function Search() {
-    const [suggestionLife, setSuggestionLife] = useState<SuggestionItem | null>(null);
+
+export default function WeatherDetail() {
+
     const {colorScheme, theme} = useContext(ThemeContext);
     const styles = createStyles(theme, colorScheme);
     const {location} = useLocationStore();
@@ -21,7 +21,6 @@ export default function Search() {
                     key: process.env.EXPO_PUBLIC_API_KEY || "",
                     location: location?.id as string,
                 });
-                setSuggestionLife(data.results[0].suggestion[0]);
 
             } catch (error) {
                 handleAxiosError(error);
@@ -31,6 +30,7 @@ export default function Search() {
         fetchData();
     }, []);
     return <View style={styles.container}>
+        <TabViewCpn></TabViewCpn>
 
     </View>
 
@@ -42,6 +42,5 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
             flex: 1,
             backgroundColor: "#ECF1F7"
         },
-
     });
 }

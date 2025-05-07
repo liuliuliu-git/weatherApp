@@ -282,7 +282,7 @@ export default function Index() {
                 return (
                     <View style={styles.moreWeatherContainer}>
                         <Text style={styles.moreWeather}
-                              onPress={() => router.push("/weatherdetail")}>查看更多天气 {">"}</Text>
+                              onPress={() => router.push("/weatherDetail")}>查看更多天气 {">"}</Text>
                     </View>
                 );
             case 'sun':
@@ -837,7 +837,7 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
         },
         moreWeather: {
             fontSize: 16,
-            color: "#666",
+            color: "#5e4b4b",
             fontWeight: "500",
             paddingHorizontal: 20,
             paddingVertical: 8,
