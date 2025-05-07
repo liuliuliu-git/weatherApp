@@ -1,9 +1,7 @@
-import {View, Text, Image, StyleSheet} from "react-native";
-import {useContext, useEffect, useState} from "react";
-import {getLifeSuggestion, SuggestionItem} from "@/apis/life";
+import {View, StyleSheet} from "react-native";
+import {useContext} from "react";
 import {ColorScheme, Theme} from "@/types";
 import {ThemeContext} from "@/context/ThemeContext";
-import {handleAxiosError} from "@/utils";
 import {useLocationStore} from "@/stores/useLocationStore";
 import TabViewCpn from "@/app/component/TabViewCpn";
 
@@ -13,25 +11,12 @@ export default function WeatherDetail() {
     const {colorScheme, theme} = useContext(ThemeContext);
     const styles = createStyles(theme, colorScheme);
     const {location} = useLocationStore();
-    //当日生活指数
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const {data} = await getLifeSuggestion({
-                    key: process.env.EXPO_PUBLIC_API_KEY || "",
-                    location: location?.id as string,
-                });
-
-            } catch (error) {
-                handleAxiosError(error);
-            }
-        }
-
-        fetchData();
-    }, []);
+    const keyData = {
+        key: process.env.EXPO_PUBLIC_API_KEY || "",
+        location: location?.id as string,
+    };
     return <View style={styles.container}>
-        <TabViewCpn></TabViewCpn>
-
+        <TabViewCpn data={keyData}></TabViewCpn>
     </View>
 
 }

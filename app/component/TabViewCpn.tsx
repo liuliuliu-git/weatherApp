@@ -1,48 +1,53 @@
 import * as React from 'react';
 import {View, Text, StyleSheet, Dimensions} from 'react-native';
-import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
-
-// 定义每个路由对应的组件
-const LiveRoute = () => <View style={styles.scene}><Text>实况内容</Text></View>;
-const HourlyRoute = () => <View style={styles.scene}><Text>逐小时内容</Text></View>;
-const DailyRoute = () => <View style={styles.scene}><Text>单日内容</Text></View>;
-const FifteenDaysRoute = () => <View style={styles.scene}><Text>15日内容</Text></View>;
-const WindHumidityRoute = () => <View style={styles.scene}><Text>风力风向、湿度内容</Text></View>;
-const LifeIndexRoute = () => <View style={styles.scene}><Text>生活指数内容</Text></View>;
-const AirQualityRoute = () => <View style={styles.scene}><Text>空气质量内容</Text></View>;
-const SunriseSunsetRoute = () => <View style={styles.scene}><Text>日出日落内容</Text></View>;
+import {TabView, TabBar} from 'react-native-tab-view';
+import LiveTab from "@/app/component/tabCpns/LiveTab";
+import HourlyTab from "@/app/component/tabCpns/HourlyTab";
+import DailyTab from "@/app/component/tabCpns/DailyTab";
+import FifteenDaysTab from "@/app/component/tabCpns/FifteenDaysTab";
+import LifeIndexTab from "@/app/component/tabCpns/LifeIndexTab";
+import AirQualityTab from "@/app/component/tabCpns/AirQualityTab";
 
 // 初始布局配置
 const initialLayout = {width: Dimensions.get('window').width};
 
-export default function TabViewCpn() {
+export interface TabViewCpnProps {
+    data?: { key: string; location: string }
+}
+
+export default function TabViewCpn({data}: TabViewCpnProps) {
     const [index, setIndex] = React.useState(0);
     const [routes] = React.useState([
         {key: 'live', title: '实况'},
         {key: 'hourly', title: '逐小时'},
         {key: 'daily', title: '单日'},
         {key: 'fifteenDays', title: '15日'},
-        {key: 'windHumidity', title: '天气指数'},
         {key: 'lifeIndex', title: '生活指数'},
         {key: 'airQuality', title: '空气质量'},
-        {key: 'sunriseSunset', title: '日出日落'},
     ]);
 
-    // 场景映射
-    const renderScene = SceneMap({
-        live: LiveRoute,
-        hourly: HourlyRoute,
-        daily: DailyRoute,
-        fifteenDays: FifteenDaysRoute,
-        windHumidity: WindHumidityRoute,
-        lifeIndex: LifeIndexRoute,
-        airQuality: AirQualityRoute,
-        sunriseSunset: SunriseSunsetRoute,
-    });
+    const renderScene = ({ route }: { route: { key: string } }) => {
+        switch (route.key) {
+            case 'live':
+                return <LiveTab data={data} />;
+            case 'hourly':
+                return <HourlyTab data={data} />;
+            case 'daily':
+                return <DailyTab data={data} />;
+            case 'fifteenDays':
+                return <FifteenDaysTab data={data} />;
+            case 'lifeIndex':
+                return <LifeIndexTab data={data} />;
+            case 'airQuality':
+                return <AirQualityTab data={data} />;
+            default:
+                return <View><Text>无内容</Text></View>;
+        }
+    };
+
 
     return (
         <TabView
-
             navigationState={{index, routes}}
             renderScene={renderScene}
             onIndexChange={setIndex}
@@ -51,11 +56,11 @@ export default function TabViewCpn() {
                 <TabBar
                     {...props}
                     scrollEnabled={true}  // 允许横向滑动
-                    indicatorStyle={{ backgroundColor: 'blue', height: 2 }}
-                    style={{ backgroundColor: 'white' }}
+                    indicatorStyle={styles.indicatorStyle}
+                    style={styles.backColor}
                     activeColor="black"
                     inactiveColor="gray"
-                    tabStyle={{ width: 'auto' }} // 标签宽度自动适应内容
+                    tabStyle={styles.tabStyle} // 标签宽度自动适应内容
                 />
             )}
         />
@@ -63,10 +68,14 @@ export default function TabViewCpn() {
 }
 
 const styles = StyleSheet.create({
-    scene: {
-        flex: 1,
-        flexDirection: "row",
-        alignItems: 'center',
-        justifyContent: 'center',
+    indicatorStyle: {
+        backgroundColor: 'blue',
+        height: 2
     },
+    backColor: {
+        backgroundColor: 'white'
+    },
+    tabStyle: {
+        width: 'auto'
+    }
 });
