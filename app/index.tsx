@@ -5,43 +5,30 @@ import {
     View,
     TouchableOpacity,
     Image,
-    Button,
-    Alert,
-    FlatList,
-    ScrollView,
-    Dimensions,
     SectionList
 } from "react-native";
 
 import {ThemeContext} from "@/context/ThemeContext";
-import {useContext, useEffect, useMemo, useState} from "react";
+import {useContext, useMemo} from "react";
 import {StatusBar} from "expo-status-bar";
 import {
     FontAwesome5,
     MaterialIcons,
     Entypo,
     Feather,
-    Fontisto,
     Ionicons,
     MaterialCommunityIcons
 } from '@expo/vector-icons';
-import {getWeatherNow, WeatherNow} from "@/apis/weather/weatherFact";
 import {useRouter} from "expo-router";
-import {DailyWeather, getWeatherDaily} from "@/apis/weather/weatherDailyForecast";
 import {Inter_500Medium, useFonts} from "@expo-google-fonts/inter";
 import {ColorScheme, Theme} from "@/types";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {useLocationStore} from "@/stores/useLocationStore";
-import {getSunData, SunItem} from "@/apis/geo/sun";
 import {grayColor, alarmColors} from "@/constants/Colors";
-import {getLifeSuggestion, SuggestionItem} from "@/apis/life";
-import {getAirQuality, AirStation} from "@/apis/air/airQualityFact";
-import AQIProgressBar from "../components/AQIProgressBar";
+import AQIProgressBar from "@/components/AQIProgressBar";
 import {
-    getWeatherForecast24Hours,
     HourlyWeather,
 } from "@/apis/weather/weatherForecast24Hours";
-import {Alarm, getWeatherAlarm} from "@/apis/weather/weatherAlarm";
 import {
     getAlarmIconInfo,
     getAlarmLevelStyle,
@@ -52,147 +39,41 @@ import {
 } from '@/utils';
 import SunPathWebView from "@/components/SunPathWebView";
 import HourlyWeatherCpn from "@/components/HourlyWeatherCpn";
+import {useWeatherFact} from "@/hooks/useWeatherFact";
+import {Location} from "@/apis/shared";
+import {useWeatherDaily} from "@/hooks/useWeatherDaily";
+import {useSunData} from "@/hooks/useSunData";
+import {useLifeIndex} from "@/hooks/useLifeIndex";
+import {useAirQuality} from "@/hooks/useAirQuality";
+import {useWeatherForecast24Hours} from "@/hooks/useWeatherForecast24Hours";
+import {useAlarmData} from "@/hooks/useAlarmData";
+
 export default function Index() {
     const {location} = useLocationStore();
     const {colorScheme, theme} = useContext(ThemeContext);
     const styles = createStyles(theme, colorScheme);
-    const [now, setNow] = useState<WeatherNow | null>(null);
-    const [recentWeather, setRecentWeather] = useState<DailyWeather[] | null>(null);
-    const [sunData, setSunData] = useState<SunItem | null>(null);
-    const [suggestionLife, setSuggestionLife] = useState<SuggestionItem | null>(null);
-    const [airQualityFact, setAirQualityFact] = useState<AirStation | null>(null);
-    const [weatherForecastHourly, setWeatherForecastHourly] = useState<HourlyWeather[] | null>(null);
-    const [weatherAlarm, setWeatherAlarm] = useState<Alarm | null>(null);
+    //地点天气
+    const {now} = useWeatherFact(location as Location);
+    //逐日天气预报以及昨日天气
+    const {weatherDaily} = useWeatherDaily(location as Location);
+    // 日出日落
+    const {sunData} = useSunData(location as Location);
+    //当日生活指数
+    const {lifeIndex} = useLifeIndex(location as Location);
+    //空气质量实况
+    const {airQuality} = useAirQuality(location as Location);
+    //24小时内天气预报
+    const {weatherForecastHourly} = useWeatherForecast24Hours(location as Location);
+    // 气象预警
+    const {weatherAlarm} = useAlarmData(location as Location);
     const router = useRouter();
-    // const params = {
-    //     key: process.env.EXPO_PUBLIC_API_KEY,
-    //     location: "泉州"
-    // }
     const [loaded, error] = useFonts({
         Inter_500Medium,
     })
-    //地点天气
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                // console.log(location)
-                const {data} = await getWeatherNow({
-                    key: process.env.EXPO_PUBLIC_API_KEY || "",
-                    location: location?.id as string,
-                });
-                if (data.results && data.results.length > 0) {
-                    setNow(data.results[0].now); // 更新状态为当前天气数据
-                }
-
-            } catch (error) {
-                handleAxiosError(error);
-            }
-        }
-
-        fetchData();
-    }, []);
-    //逐日天气预报以及昨日天气
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const {data} = await getWeatherDaily({
-                    key: process.env.EXPO_PUBLIC_API_KEY || "",
-                    location: location?.id as string,
-                    days: 7,
-                    start: -1
-                });
-                setRecentWeather(data.results[0].daily);
-            } catch (error) {
-                handleAxiosError(error);
-            }
-        }
-
-        fetchData();
-    }, []);
-    // 日出日落
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const {data} = await getSunData({
-                    key: process.env.EXPO_PUBLIC_API_KEY || "",
-                    location: location?.id as string,
-                });
-                setSunData(data.results[0].sun[0]);
-            } catch (error) {
-                handleAxiosError(error);
-            }
-        }
-
-        fetchData();
-    }, []);
-    //当日生活指数
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const {data} = await getLifeSuggestion({
-                    key: process.env.EXPO_PUBLIC_API_KEY || "",
-                    location: location?.id as string,
-                });
-                setSuggestionLife(data.results[0].suggestion[0]);
-            } catch (error) {
-                handleAxiosError(error);
-            }
-        }
-
-        fetchData();
-    }, []);
-    //获取空气质量实况
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const {data} = await getAirQuality({
-                    key: process.env.EXPO_PUBLIC_API_KEY || "",
-                    location: location?.id as string,
-                });
-                setAirQualityFact(data.results[0].air.city);
-            } catch (error) {
-                handleAxiosError(error);
-            }
-        }
-
-        fetchData();
-    }, [])
-    //获取24小时内天气预报
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const {data} = await getWeatherForecast24Hours({
-                    key: process.env.EXPO_PUBLIC_API_KEY || "",
-                    location: location?.id as string,
-                });
-                setWeatherForecastHourly(data.results[0].hourly);
-            } catch (error) {
-                handleAxiosError(error);
-            }
-        }
-
-        fetchData();
-    }, []);
-    // 气象预警
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const {data} = await getWeatherAlarm({
-                    key: process.env.EXPO_PUBLIC_API_KEY || "",
-                    location: location?.id as string,
-                });
-                setWeatherAlarm(data.results[0].alarms[0]);
-            } catch (error) {
-                handleAxiosError(error);
-            }
-        }
-
-        fetchData();
-    }, []);
     const aqi = useMemo(() => {
-        const parsed = parseInt(airQualityFact?.aqi as string);
+        const parsed = parseInt(airQuality?.aqi as string);
         return isNaN(parsed) ? 0 : parsed;
-    }, [airQualityFact]);
+    }, [airQuality]);
     if (!loaded && !error) {
         return null
     }
@@ -210,7 +91,7 @@ export default function Index() {
             },
             {
                 type: 'forecast',
-                data: recentWeather || []
+                data: weatherDaily || []
             },
             {
                 type: 'more',
@@ -252,9 +133,9 @@ export default function Index() {
                             <Text style={styles.currentWeatherText}>{now?.text}</Text>
                             {/*最低温度到最高温度*/}
                             <View style={styles.tempRangeContainer}>
-                                <Text style={styles.tempRangeText}>{recentWeather?.[0]?.low}</Text>
+                                <Text style={styles.tempRangeText}>{weatherDaily?.[0]?.low}</Text>
                                 <Text style={styles.tempRangeText}> ~ </Text>
-                                <Text style={styles.tempRangeText}>{recentWeather?.[0]?.high}°C</Text>
+                                <Text style={styles.tempRangeText}>{weatherDaily?.[0]?.high}°C</Text>
                             </View>
                         </View>
 
@@ -271,7 +152,7 @@ export default function Index() {
                                 <Text style={styles.weatherAlarmText} numberOfLines={1} ellipsizeMode="tail">
                                     {weatherAlarm.type}{weatherAlarm.level}预警
                                 </Text>
-                                <Feather name="chevron-right" size={16} color="#fff" style={{marginTop:3}}/>
+                                <Feather name="chevron-right" size={16} color="#fff" style={{marginTop: 3}}/>
                             </TouchableOpacity>
                         )}
                     </View>
@@ -322,7 +203,7 @@ export default function Index() {
                                         <Ionicons name="shirt-outline" size={22} color="#FFFFFF"/>
                                     </View>
                                     <Text style={styles.suggestionText}>晾晒</Text>
-                                    <Text style={styles.suggestionDesc}>{suggestionLife?.airing?.brief}</Text>
+                                    <Text style={styles.suggestionDesc}>{lifeIndex?.airing?.brief}</Text>
                                 </View>
                             </View>
 
@@ -333,7 +214,7 @@ export default function Index() {
                                         <MaterialIcons name="healing" size={22} color="#FFFFFF"/>
                                     </View>
                                     <Text style={styles.suggestionText}>过敏</Text>
-                                    <Text style={styles.suggestionDesc}>{suggestionLife?.allergy?.brief}</Text>
+                                    <Text style={styles.suggestionDesc}>{lifeIndex?.allergy?.brief}</Text>
                                 </View>
                             </View>
 
@@ -344,7 +225,7 @@ export default function Index() {
                                         <MaterialCommunityIcons name="kite" size={24} color="#ffffff"/>
                                     </View>
                                     <Text style={styles.suggestionText}>放风筝</Text>
-                                    <Text style={styles.suggestionDesc}>{suggestionLife?.kiteflying?.brief}</Text>
+                                    <Text style={styles.suggestionDesc}>{lifeIndex?.kiteflying?.brief}</Text>
                                 </View>
                             </View>
 
@@ -355,7 +236,7 @@ export default function Index() {
                                         <Ionicons name="fitness-outline" size={22} color="#FFFFFF"/>
                                     </View>
                                     <Text style={styles.suggestionText}>运动</Text>
-                                    <Text style={styles.suggestionDesc}>{suggestionLife?.sport?.brief}</Text>
+                                    <Text style={styles.suggestionDesc}>{lifeIndex?.sport?.brief}</Text>
                                 </View>
                             </View>
 
@@ -366,7 +247,7 @@ export default function Index() {
                                         <MaterialIcons name="beach-access" size={22} color="#FFFFFF"/>
                                     </View>
                                     <Text style={styles.suggestionText}>钓鱼</Text>
-                                    <Text style={styles.suggestionDesc}>{suggestionLife?.fishing?.brief}</Text>
+                                    <Text style={styles.suggestionDesc}>{lifeIndex?.fishing?.brief}</Text>
                                 </View>
                             </View>
 
@@ -377,7 +258,7 @@ export default function Index() {
                                         <Ionicons name="car-outline" size={22} color="#FFFFFF"/>
                                     </View>
                                     <Text style={styles.suggestionText}>洗车</Text>
-                                    <Text style={styles.suggestionDesc}>{suggestionLife?.car_washing?.brief}</Text>
+                                    <Text style={styles.suggestionDesc}>{lifeIndex?.car_washing?.brief}</Text>
                                 </View>
                             </View>
                             {/* 雨伞 */}
@@ -387,7 +268,7 @@ export default function Index() {
                                         <Ionicons name="umbrella-outline" size={22} color="#FFFFFF"/>
                                     </View>
                                     <Text style={styles.suggestionText}>雨伞</Text>
-                                    <Text style={styles.suggestionDesc}>{suggestionLife?.umbrella?.brief}</Text>
+                                    <Text style={styles.suggestionDesc}>{lifeIndex?.umbrella?.brief}</Text>
                                 </View>
                             </View>
 
@@ -399,7 +280,7 @@ export default function Index() {
                                     </View>
                                     <Text style={styles.suggestionText}>感冒</Text>
 
-                                    <Text style={styles.suggestionDesc}>{suggestionLife?.flu?.brief}</Text>
+                                    <Text style={styles.suggestionDesc}>{lifeIndex?.flu?.brief}</Text>
                                 </View>
                             </View>
                         </View>

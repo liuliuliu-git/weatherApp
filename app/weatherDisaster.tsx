@@ -1,39 +1,21 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {useLocationStore} from '@/stores/useLocationStore';
-import {Alarm, getWeatherAlarm} from '@/apis/weather/weatherAlarm';
-import { handleAxiosError} from '@/utils';
+import {useAlarmData} from "@/hooks/useAlarmData";
+import {Location} from "@/apis/shared";
 export default function WeatherDisaster() {
     const {location} = useLocationStore();
-    const [weatherAlarms, setWeatherAlarms] = useState<Alarm[] | null>(null);
-
-    const fetchWeatherAlarms = async (locationId: string) => {
-        try {
-            const {data} = await getWeatherAlarm({
-                key: process.env.EXPO_PUBLIC_API_KEY || "",
-                location: locationId
-            });
-            setWeatherAlarms(data.results[0].alarms);
-        } catch (error) {
-            handleAxiosError(error);
-        }
-    };
-
-    useEffect(() => {
-        if (location?.id) {
-            fetchWeatherAlarms(location.id);
-        }
-    }, [location]);
-
+    // 气象预警
+    const {weatherAlarm} = useAlarmData(location as Location);
     return (
         <View style={styles.container}>
-            {weatherAlarms && weatherAlarms.map((alarm, index) => (
-                <View key={alarm.alarm_id || index} style={styles.alarmItem}>
-                    <Text style={styles.title}>{alarm.title}</Text>
-                    <Text style={styles.description}>{alarm.description}</Text>
-                    <Text style={styles.pubDate}>发布时间: {alarm.pub_date}</Text>
+            {weatherAlarm &&
+                <View key={weatherAlarm.alarm_id} style={styles.alarmItem}>
+                    <Text style={styles.title}>{weatherAlarm.title}</Text>
+                    <Text style={styles.description}>{weatherAlarm.description}</Text>
+                    <Text style={styles.pubDate}>发布时间: {weatherAlarm.pub_date}</Text>
                 </View>
-            ))}
+            }
         </View>
     );
 }
