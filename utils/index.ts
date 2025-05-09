@@ -10,6 +10,7 @@ import {getWeatherIconUri} from '@/utils/getWeatherIconUri';
 import {getWeekday} from '@/utils/getWeekday';
 import {handleAxiosError} from '@/utils/handleAxiosError';
 import { getWindLevelBySpeed } from "@/utils/getWindLevel";
+import {getAqiLevelInfo} from "@/utils/getAqiLevelInfo";
 
 export {
     request,
@@ -23,5 +24,6 @@ export {
     getCurrentTime,
     timeToAngle,
     formatTime,
-    getWindLevelBySpeed
+    getWindLevelBySpeed,
+    getAqiLevelInfo
 }

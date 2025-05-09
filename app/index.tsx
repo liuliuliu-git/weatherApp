@@ -17,7 +17,7 @@ import {
     Entypo,
     Feather,
     Ionicons,
-    MaterialCommunityIcons
+    MaterialCommunityIcons, FontAwesome6
 } from '@expo/vector-icons';
 import {useRouter} from "expo-router";
 import {Inter_500Medium, useFonts} from "@expo-google-fonts/inter";
@@ -55,7 +55,7 @@ export default function Index() {
     //地点天气
     const {now} = useWeatherFact(location as Location);
     //逐日天气预报以及昨日天气
-    const {weatherDaily} = useWeatherDaily(location as Location);
+    const {weatherDaily} = useWeatherDaily(location as Location,7,-1);
     // 日出日落
     const {sunData} = useSunData(location as Location);
     //当日生活指数
@@ -244,7 +244,7 @@ export default function Index() {
                             <View style={styles.suggestionItemWrapper}>
                                 <View style={styles.flatCard}>
                                     <View style={[styles.suggestionIconContainer, styles.orangeIconContainer]}>
-                                        <MaterialIcons name="beach-access" size={22} color="#FFFFFF"/>
+                                        <FontAwesome6 name="fish-fins" size={22} color="white" />
                                     </View>
                                     <Text style={styles.suggestionText}>钓鱼</Text>
                                     <Text style={styles.suggestionDesc}>{lifeIndex?.fishing?.brief}</Text>
@@ -293,7 +293,6 @@ export default function Index() {
 
     const renderItem = ({item, section}: { item: any, section: { type: string } }) => {
         if (section.type === 'forecast') {
-            // 原来的renderItem逻辑
             // 提取日期和月份
             const dateParts = item.date.split('-');
             const month = dateParts[1];

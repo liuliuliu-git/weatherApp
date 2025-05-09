@@ -2,27 +2,17 @@
 import React, {useEffect, useRef} from 'react';
 import Svg, {Rect, Defs, LinearGradient, Stop, Line} from 'react-native-svg';
 import {View, Text, StyleSheet, Animated} from 'react-native';
+import {getAqiLevelInfo} from "@/utils";
 
 
-const AQI_LEVELS = [
-    {label: '优', max: 50, color: '#78b30f'},
-    {label: '良', max: 100, color: '#D1D50F'},
-    {label: '轻度污染', max: 150, color: '#E69C19'},
-    {label: '中度污染', max: 200, color: '#CC1119'},
-    {label: '重度污染', max: 300, color: '#710078'},
-    {label: '严重污染', max: 500, color: '#4A0D1F'},
-];
+
+
 const AnimatedRect = Animated.createAnimatedComponent(Rect);
-const AnimatedLine = Animated.createAnimatedComponent(Line);
-
 const WIDTH = 300;
 const HEIGHT = 10;
 
 const AQIProgressBar = ({aqi}: { aqi: number }) => {
-
-    const getAQILevel = () =>
-        AQI_LEVELS.find((level) => aqi <= level.max) || AQI_LEVELS[AQI_LEVELS.length - 1];
-    const level = getAQILevel();
+    const level = getAqiLevelInfo(aqi);
     const aqiLineX = useRef(new Animated.Value(0)).current;
     // 限制文字移动范围，防止越界
     const clampedX = aqiLineX.interpolate({
@@ -34,7 +24,7 @@ const AQIProgressBar = ({aqi}: { aqi: number }) => {
         const toValue = (aqi / 500) * WIDTH;
         Animated.timing(aqiLineX, {
             toValue,
-            delay:700,
+            delay: 700,
             duration: 2000, // 动画持续时间
             useNativeDriver: true,
         }).start();
@@ -43,7 +33,6 @@ const AQIProgressBar = ({aqi}: { aqi: number }) => {
 
     return (
         <View style={styles.container}>
-
             {/* AQI 数值（上方） */}
             <Animated.View
                 style={[
@@ -51,8 +40,7 @@ const AQIProgressBar = ({aqi}: { aqi: number }) => {
                     {
                         transform: [{translateX: clampedX}],
                     },
-                ]}
-            >
+                ]}>
                 <Text style={styles.aqiText}>{aqi}</Text>
             </Animated.View>
             {/* AQI 等级（下方） */}
@@ -64,7 +52,7 @@ const AQIProgressBar = ({aqi}: { aqi: number }) => {
                     },
                 ]}
             >
-                <Text style={styles.levelText}>{level.label}</Text>
+                <Text style={styles.levelText}>{level?.label}</Text>
             </Animated.View>
             <Svg width={WIDTH} height={50}>
                 <Defs>
