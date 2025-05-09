@@ -1,7 +1,5 @@
 import {View, Text, Image, StyleSheet} from "react-native";
-import {TabViewCpnProps} from "@/components/TabViewCpn";
-
-export default function AirQualityTab({data}: TabViewCpnProps) {
+export default function AirQualityTab() {
 
     return <View style={styles.container}>
         <Text>空气质量</Text>

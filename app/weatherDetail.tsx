@@ -1,24 +1,18 @@
 import {View, StyleSheet} from "react-native";
-import {useContext} from "react";
-import {ColorScheme, Theme} from "@/types";
+import {useContext, useEffect} from "react";
 import {ThemeContext} from "@/context/ThemeContext";
-import {useLocationStore} from "@/stores/useLocationStore";
 import TabViewCpn from "@/components/TabViewCpn";
+
+import {Theme,ColorScheme} from "@/types/theme";
+
 
 
 export default function WeatherDetail() {
-
     const {colorScheme, theme} = useContext(ThemeContext);
     const styles = createStyles(theme, colorScheme);
-    const {location} = useLocationStore();
-    const keyData = {
-        key: process.env.EXPO_PUBLIC_API_KEY || "",
-        location: location?.id as string,
-    };
     return <View style={styles.container}>
-        <TabViewCpn data={keyData}></TabViewCpn>
+        <TabViewCpn />
     </View>
-
 }
 
 function createStyles(theme: Theme, colorScheme: ColorScheme) {

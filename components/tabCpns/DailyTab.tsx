@@ -1,7 +1,5 @@
 import {View, Text, Image, StyleSheet} from "react-native";
-import {TabViewCpnProps} from "@/components/TabViewCpn";
-
-export default function DailyTab({data}: TabViewCpnProps) {
+export default function DailyTab() {
 
     return <View style={styles.container}>
         <Text>单日</Text>

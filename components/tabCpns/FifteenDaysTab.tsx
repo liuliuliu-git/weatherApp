@@ -1,7 +1,5 @@
 import {View, Text, Image, StyleSheet} from "react-native";
-import {TabViewCpnProps} from "@/components/TabViewCpn";
-
-export default function FifteenDaysTab({data}: TabViewCpnProps) {
+export default function FifteenDaysTab() {
 
     return <View style={styles.container}>
         <Text>未来十五天</Text>

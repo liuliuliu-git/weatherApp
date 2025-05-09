@@ -1,7 +1,7 @@
 import {View, Text, Image, StyleSheet} from "react-native";
-import {TabViewCpnProps} from "@/components/TabViewCpn";
 
-export default function HourlyTab({data}: TabViewCpnProps) {
+
+export default function HourlyTab() {
 
     return <View style={styles.container}>
         <Text>逐小时内容</Text>

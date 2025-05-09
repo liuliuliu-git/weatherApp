@@ -11,11 +11,8 @@ import AirQualityTab from "@/components/tabCpns/AirQualityTab";
 // 初始布局配置
 const initialLayout = {width: Dimensions.get('window').width};
 
-export interface TabViewCpnProps {
-    data?: { key: string; location: string }
-}
 
-export default function TabViewCpn({data}: TabViewCpnProps) {
+export default function TabViewCpn() {
     const [index, setIndex] = React.useState(0);
     const [routes] = React.useState([
         {key: 'live', title: '实况'},
@@ -26,20 +23,20 @@ export default function TabViewCpn({data}: TabViewCpnProps) {
         {key: 'airQuality', title: '空气质量'},
     ]);
 
-    const renderScene = ({ route }: { route: { key: string } }) => {
+    const renderScene = ({route}: { route: { key: string } }) => {
         switch (route.key) {
             case 'live':
-                return <LiveTab data={data} />;
+                return <LiveTab />;
             case 'hourly':
-                return <HourlyTab data={data} />;
+                return <HourlyTab />;
             case 'daily':
-                return <DailyTab data={data} />;
+                return <DailyTab />;
             case 'fifteenDays':
-                return <FifteenDaysTab data={data} />;
+                return <FifteenDaysTab />;
             case 'lifeIndex':
-                return <LifeIndexTab data={data} />;
+                return <LifeIndexTab />;
             case 'airQuality':
-                return <AirQualityTab data={data} />;
+                return <AirQualityTab />;
             default:
                 return <View><Text>无内容</Text></View>;
         }
