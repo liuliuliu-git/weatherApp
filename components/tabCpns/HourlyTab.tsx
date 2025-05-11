@@ -146,34 +146,34 @@ export default function HourlyTab() {
                 <Text style={styles.detailsTitle}>当前时段详情</Text>
                 <View style={styles.detailsGrid}>
                     <View style={styles.detailItem}>
-                        <Ionicons name="thermometer-outline" size={24} color="#2196f3"/>
+                        <Ionicons name="thermometer-outline" size={24} color="#4a90e2"/>
                         <Text style={styles.detailLabel}>温度</Text>
                         <Text style={styles.detailValue}>{weatherData.temperature}°C</Text>
                     </View>
                     <View style={styles.detailItem}>
-                        <MaterialCommunityIcons name="water-percent" size={24} color="#03a9f4"/>
+                        <MaterialCommunityIcons name="water-percent" size={24} color="#4a90e2"/>
                         <Text style={styles.detailLabel}>湿度</Text>
                         <Text style={styles.detailValue}>{weatherData.humidity}%</Text>
                     </View>
                     <View style={styles.detailItem}>
-                        <MaterialCommunityIcons name="weather-windy" size={24} color="#ff9800"/>
+                        <MaterialCommunityIcons name="weather-windy" size={24} color="#4a90e2"/>
                         <Text style={styles.detailLabel}>风级</Text>
                         <Text style={styles.detailValue}>
                             {getWindLevelBySpeed(weatherData.wind_speed)}
                         </Text>
                     </View>
                     <View style={styles.detailItem}>
-                        <MaterialCommunityIcons name="compass" size={24} color="#4caf50"/>
+                        <MaterialCommunityIcons name="compass" size={24} color="#4a90e2"/>
                         <Text style={styles.detailLabel}>风向</Text>
                         <Text style={styles.detailValue}>{weatherData.wind_direction}</Text>
                     </View>
                     <View style={styles.detailItem}>
-                        <MaterialCommunityIcons name="weather-partly-cloudy" size={24} color="#9c27b0"/>
+                        <MaterialCommunityIcons name="weather-partly-cloudy" size={24} color="#4a90e2"/>
                         <Text style={styles.detailLabel}>天气</Text>
                         <Text style={styles.detailValue}>{weatherData.text}</Text>
                     </View>
                     <View style={styles.detailItem}>
-                        <MaterialCommunityIcons name="air-filter" size={24} color="#795548"/>
+                        <MaterialCommunityIcons name="air-filter" size={24} color="#4a90e2"/>
                         <Text style={styles.detailLabel}>空气质量</Text>
                         <Text style={styles.detailValue}>{airData.quality}</Text>
                     </View>

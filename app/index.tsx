@@ -57,9 +57,9 @@ export default function Index() {
     //逐日天气预报以及昨日天气
     const {weatherDaily} = useWeatherDaily(location as Location, 7, -1);
     // 日出日落
-    const {sunData} = useSunData(location as Location,1);
+    const {sunData} = useSunData(location as Location, 1);
     //当日生活指数
-    const {lifeIndex} = useLifeIndex(location as Location);
+    const {lifeIndex} = useLifeIndex(location as Location, 1);
     //空气质量实况
     const {airQuality} = useAirQuality(location as Location);
     //24小时内天气预报
@@ -74,6 +74,7 @@ export default function Index() {
         const parsed = parseInt(airQuality?.aqi as string);
         return isNaN(parsed) ? 0 : parsed;
     }, [airQuality]);
+
     if (!loaded && !error) {
         return null
     }
@@ -167,7 +168,8 @@ export default function Index() {
                     </View>
                 );
             case 'sun':
-                return <SunPathWebView sunrise={sunData?.sunrise as string} sunset={sunData?.sunset as string}/>
+                return <SunPathWebView sunrise={sunData?.[0]?.sunrise as string}
+                                       sunset={sunData?.[0]?.sunset as string}/>
 
             case 'airQuality':
                 return (
@@ -203,7 +205,7 @@ export default function Index() {
                                         <Ionicons name="shirt-outline" size={22} color="#FFFFFF"/>
                                     </View>
                                     <Text style={styles.suggestionText}>晾晒</Text>
-                                    <Text style={styles.suggestionDesc}>{lifeIndex?.airing?.brief}</Text>
+                                    <Text style={styles.suggestionDesc}>{lifeIndex?.[0]?.airing?.brief}</Text>
                                 </View>
                             </View>
 
@@ -214,7 +216,7 @@ export default function Index() {
                                         <MaterialIcons name="healing" size={22} color="#FFFFFF"/>
                                     </View>
                                     <Text style={styles.suggestionText}>过敏</Text>
-                                    <Text style={styles.suggestionDesc}>{lifeIndex?.allergy?.brief}</Text>
+                                    <Text style={styles.suggestionDesc}>{lifeIndex?.[0]?.allergy?.brief}</Text>
                                 </View>
                             </View>
 
@@ -225,7 +227,7 @@ export default function Index() {
                                         <MaterialCommunityIcons name="kite" size={24} color="#ffffff"/>
                                     </View>
                                     <Text style={styles.suggestionText}>放风筝</Text>
-                                    <Text style={styles.suggestionDesc}>{lifeIndex?.kiteflying?.brief}</Text>
+                                    <Text style={styles.suggestionDesc}>{lifeIndex?.[0]?.kiteflying?.brief}</Text>
                                 </View>
                             </View>
 
@@ -236,7 +238,7 @@ export default function Index() {
                                         <Ionicons name="fitness-outline" size={22} color="#FFFFFF"/>
                                     </View>
                                     <Text style={styles.suggestionText}>运动</Text>
-                                    <Text style={styles.suggestionDesc}>{lifeIndex?.sport?.brief}</Text>
+                                    <Text style={styles.suggestionDesc}>{lifeIndex?.[0]?.sport?.brief}</Text>
                                 </View>
                             </View>
 
@@ -247,7 +249,7 @@ export default function Index() {
                                         <FontAwesome6 name="fish-fins" size={22} color="white"/>
                                     </View>
                                     <Text style={styles.suggestionText}>钓鱼</Text>
-                                    <Text style={styles.suggestionDesc}>{lifeIndex?.fishing?.brief}</Text>
+                                    <Text style={styles.suggestionDesc}>{lifeIndex?.[0]?.fishing?.brief}</Text>
                                 </View>
                             </View>
 
@@ -258,7 +260,7 @@ export default function Index() {
                                         <Ionicons name="car-outline" size={22} color="#FFFFFF"/>
                                     </View>
                                     <Text style={styles.suggestionText}>洗车</Text>
-                                    <Text style={styles.suggestionDesc}>{lifeIndex?.car_washing?.brief}</Text>
+                                    <Text style={styles.suggestionDesc}>{lifeIndex?.[0]?.car_washing?.brief}</Text>
                                 </View>
                             </View>
                             {/* 雨伞 */}
@@ -268,7 +270,7 @@ export default function Index() {
                                         <Ionicons name="umbrella-outline" size={22} color="#FFFFFF"/>
                                     </View>
                                     <Text style={styles.suggestionText}>雨伞</Text>
-                                    <Text style={styles.suggestionDesc}>{lifeIndex?.umbrella?.brief}</Text>
+                                    <Text style={styles.suggestionDesc}>{lifeIndex?.[0]?.umbrella?.brief}</Text>
                                 </View>
                             </View>
 
@@ -280,7 +282,7 @@ export default function Index() {
                                     </View>
                                     <Text style={styles.suggestionText}>感冒</Text>
 
-                                    <Text style={styles.suggestionDesc}>{lifeIndex?.flu?.brief}</Text>
+                                    <Text style={styles.suggestionDesc}>{lifeIndex?.[0]?.flu?.brief}</Text>
                                 </View>
                             </View>
                         </View>

@@ -9,6 +9,7 @@ export type Suggestion = {
 
 // 所有生活建议集合类型
 export type SuggestionItem = {
+    date: string;
     ac: Suggestion, // 空调开启
     air_pollution: Suggestion, // 空气污染扩散条件
     airing: Suggestion, // 晾晒
@@ -31,6 +32,8 @@ export type SuggestionItem = {
     traffic: Suggestion, // 交通
     umbrella: Suggestion, // 雨伞
     uv: Suggestion, // 紫外线
+    // 添加索引签名，支持任意字符串 key 的访问
+    [key: string]: Suggestion;
 };
 // 生活建议类型
 export type LifeSuggestion = {

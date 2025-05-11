@@ -1,4 +1,4 @@
-import React, {useState, useMemo, useEffect} from "react";
+import React, {useState, useMemo} from "react";
 import {View, Text, StyleSheet, TouchableOpacity, Image} from "react-native";
 import {useLocationStore} from "@/stores/useLocationStore";
 import {useWeatherDaily} from "@/hooks/useWeatherDaily";

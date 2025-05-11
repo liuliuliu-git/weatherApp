@@ -46,11 +46,11 @@ export default function LiveTab() {
                             <Text style={styles.temperature}>{now.temperature}°C</Text>
                             <View style={styles.tempIcons}>
                                 <Svg height="12" width="12" style={styles.tempIcon}>
-                                    <Polygon points="6,0 12,12 0,12" fill="red"/>
+                                    <Polygon points="6,0 12,12 0,12" fill="#ff5733"/>
                                 </Svg>
                                 <Text style={styles.tempRange}>{weatherDaily ? weatherDaily[0].high : '--'}°</Text>
                                 <Svg height="12" width="12" style={styles.tempIcon}>
-                                    <Polygon points="6,12 12,0 0,0" fill="blue"/>
+                                    <Polygon points="6,12 12,0 0,0" fill="#4a90e2"/>
                                 </Svg>
                                 <Text style={styles.tempRange}>{weatherDaily ? weatherDaily[0].low : '--'}°</Text>
                             </View>
@@ -68,22 +68,22 @@ export default function LiveTab() {
                         <Text style={styles.detailsTitle}>实况详情</Text>
                         <View style={styles.detailsGrid}>
                             <View style={styles.detailItem}>
-                                <Ionicons name="thermometer-outline" size={24} color="#2196f3"/>
+                                <Ionicons name="thermometer-outline" size={24} color="#4a90e2"/>
                                 <Text style={styles.detailLabel}>体感</Text>
                                 <Text style={styles.detailValue}>{now.feels_like}°C</Text>
                             </View>
                             <View style={styles.detailItem}>
-                                <MaterialCommunityIcons name="water-percent" size={24} color="#03a9f4"/>
+                                <MaterialCommunityIcons name="water-percent" size={24} color="#4a90e2"/>
                                 <Text style={styles.detailLabel}>湿度</Text>
                                 <Text style={styles.detailValue}>{now.humidity}%</Text>
                             </View>
                             <View style={styles.detailItem}>
-                                <FontAwesome5 name="tachometer-alt" size={22} color="#ff9800"/>
+                                <FontAwesome5 name="tachometer-alt" size={22} color="#4a90e2"/>
                                 <Text style={styles.detailLabel}>气压</Text>
                                 <Text style={styles.detailValue}>{now.pressure}百帕</Text>
                             </View>
                             <View style={styles.detailItem}>
-                                <Ionicons name="eye-outline" size={24} color="#8bc34a"/>
+                                <Ionicons name="eye-outline" size={24} color="#4a90e2"/>
                                 <Text style={styles.detailLabel}>能见度</Text>
                                 <Text style={styles.detailValue}>{now.visibility}km</Text>
                             </View>
