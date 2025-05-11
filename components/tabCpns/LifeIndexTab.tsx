@@ -45,11 +45,11 @@ export default function LifeIndexTab() {
     const area = location?.name || "--";
 
     // 上方穿衣建议
-    const dressingBrief = todayLife.dressing?.brief || "--";
-    const dressingDetail = todayLife.dressing?.details || "--";
+    const dressingBrief = todayLife?.dressing?.brief || "--";
+    const dressingDetail = todayLife?.dressing?.details || "--";
 
     // 生活详情
-    const getLifeDetail = (key: string) => todayLife[key]?.brief || "--";
+    const getLifeDetail = (key: string) => todayLife?.[key]?.brief || "--";
 
     return (
         <View style={styles.container}>
