@@ -14,12 +14,6 @@ const HEIGHT = 10;
 const AQIProgressBar = ({aqi}: { aqi: number }) => {
     const level = getAqiLevelInfo(aqi);
     const aqiLineX = useRef(new Animated.Value(0)).current;
-    // 限制文字移动范围，防止越界
-    const clampedX = aqiLineX.interpolate({
-        inputRange: [-5, WIDTH],
-        outputRange: [0, WIDTH - 15], // 防止右边超出，30 是文字宽度预估
-        extrapolate: 'clamp',
-    });
     useEffect(() => {
         const toValue = (aqi / 500) * WIDTH;
         Animated.timing(aqiLineX, {
@@ -33,27 +27,6 @@ const AQIProgressBar = ({aqi}: { aqi: number }) => {
 
     return (
         <View style={styles.container}>
-            {/* AQI 数值（上方） */}
-            <Animated.View
-                style={[
-                    styles.textAbove,
-                    {
-                        transform: [{translateX: clampedX}],
-                    },
-                ]}>
-                <Text style={styles.aqiText}>{aqi}</Text>
-            </Animated.View>
-            {/* AQI 等级（下方） */}
-            <Animated.View
-                style={[
-                    styles.textBelow,
-                    {
-                        transform: [{translateX: clampedX}],
-                    },
-                ]}
-            >
-                <Text style={styles.levelText}>{level?.label}</Text>
-            </Animated.View>
             <Svg width={WIDTH} height={50}>
                 <Defs>
                     <LinearGradient id="aqiGradient" x1="0" y1="0" x2={WIDTH} y2="0" gradientUnits="userSpaceOnUse">

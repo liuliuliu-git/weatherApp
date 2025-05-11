@@ -35,7 +35,7 @@ import {
     getAlarmLevelIconStyle,
     getWeatherIconUri,
     getWeekday,
-    handleAxiosError
+    handleAxiosError, getAqiLevelInfo
 } from '@/utils';
 import SunPathWebView from "@/components/SunPathWebView";
 import HourlyWeatherCpn from "@/components/HourlyWeatherCpn";
@@ -187,8 +187,13 @@ export default function Index() {
                             <View style={styles.airQualityProgressContainer}>
                                 <AQIProgressBar aqi={aqi}/>
                                 <View style={styles.airQualityRange}>
-                                    <Text style={styles.airQualityRangeText}>优</Text>
-                                    <Text style={styles.airQualityRangeText}>严重</Text>
+                                    <Text style={styles.airQualityRangeText}>AQI:{aqi}</Text>
+                                    <Text
+                                        style={styles.airQualityRangeText}>质量类别:
+                                        <Text style={{color: getAqiLevelInfo(aqi)?.color}}>
+                                            {getAqiLevelInfo(aqi)?.label}
+                                        </Text>
+                                    </Text>
                                 </View>
                             </View>
                         </View>
@@ -699,11 +704,11 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
         },
         airQualityRange: {
             flexDirection: 'row',
-            justifyContent: 'space-between',
+            justifyContent: 'space-evenly',
             marginTop: 5
         },
         airQualityRangeText: {
-            fontSize: 12,
+            fontSize: 16,
             color: '#757575'
         },
         forecastList: {
@@ -719,7 +724,7 @@ function createStyles(theme: Theme, colorScheme: ColorScheme) {
         },
         moreWeather: {
             fontSize: 16,
-            color: "#5e4b4b",
+            color: "#f6f6f8",
             fontWeight: "500",
             paddingHorizontal: 20,
             paddingVertical: 8,
