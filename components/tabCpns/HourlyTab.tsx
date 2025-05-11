@@ -6,8 +6,6 @@ import {useWeatherForecast24Hours} from "@/hooks/useWeatherForecast24Hours";
 import {useAirForecast24Hours} from "@/hooks/useAirForecast24Hours";
 import {MaterialCommunityIcons, Ionicons} from '@expo/vector-icons';
 import {getWindLevelBySpeed} from "@/utils/getWindLevel";
-import {HourlyWeather} from "@/apis/weather/weatherForecast24Hours";
-import {AirHourlyItem} from "@/apis/air/airForecast24Hours";
 import Svg, {Path, Circle} from 'react-native-svg';
 
 const POINT_SPACING = 60; // 点之间的间距
@@ -197,7 +195,7 @@ export default function HourlyTab() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#eaeaed",
+        backgroundColor: "#f6f6f8",
     },
     contentContainer: {
         padding: 16,
@@ -219,6 +217,11 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         padding: 16,
         marginBottom: 16,
+        elevation: 2,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 4,
     },
     chartHeader: {
         flexDirection: 'row',
@@ -287,8 +290,8 @@ const styles = StyleSheet.create({
         padding: 16,
         elevation: 2,
         shadowColor: "#000",
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.1,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
         shadowRadius: 4,
     },
     detailsTitle: {

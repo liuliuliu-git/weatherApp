@@ -55,9 +55,9 @@ export default function Index() {
     //地点天气
     const {now} = useWeatherFact(location as Location);
     //逐日天气预报以及昨日天气
-    const {weatherDaily} = useWeatherDaily(location as Location,7,-1);
+    const {weatherDaily} = useWeatherDaily(location as Location, 7, -1);
     // 日出日落
-    const {sunData} = useSunData(location as Location);
+    const {sunData} = useSunData(location as Location,1);
     //当日生活指数
     const {lifeIndex} = useLifeIndex(location as Location);
     //空气质量实况
@@ -244,7 +244,7 @@ export default function Index() {
                             <View style={styles.suggestionItemWrapper}>
                                 <View style={styles.flatCard}>
                                     <View style={[styles.suggestionIconContainer, styles.orangeIconContainer]}>
-                                        <FontAwesome6 name="fish-fins" size={22} color="white" />
+                                        <FontAwesome6 name="fish-fins" size={22} color="white"/>
                                     </View>
                                     <Text style={styles.suggestionText}>钓鱼</Text>
                                     <Text style={styles.suggestionDesc}>{lifeIndex?.fishing?.brief}</Text>

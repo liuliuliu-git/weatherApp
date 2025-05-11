@@ -26,7 +26,7 @@ export type WeatherDailyData = {
     last_update: string; // 最后更新时间
 };
 // 获取每日天气信息的请求函数
-export const getWeatherDaily = ({key, location, days = 17, start = -1,}: WeatherParams
+export const getWeatherDaily = ({key, location, days = 17, start = -1}: WeatherParams
     ) => {
         return request.get<ResType<WeatherDailyData[]>>(`/weather/daily.json`, {
             params: {

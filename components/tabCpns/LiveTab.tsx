@@ -100,11 +100,16 @@ export default function LiveTab() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#eaeaed",
+        backgroundColor: "#f6f6f8",
     },
     contentContainer: {
         padding: 16,
         paddingBottom: 32,
+        elevation: 2,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 4,
     },
     weatherCard: {
         backgroundColor: "#fff",
@@ -113,8 +118,8 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         elevation: 2,
         shadowColor: "#000",
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.1,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
         shadowRadius: 4,
     },
     header: {

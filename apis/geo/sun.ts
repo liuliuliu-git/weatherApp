@@ -1,5 +1,6 @@
 import {request} from '@/utils/request';
 import {ResType, Location, WeatherParams} from "@/apis/shared";
+import {start} from "node:repl";
 
 //单条日出日落记录
 export type SunItem = {
@@ -13,8 +14,14 @@ export type SunData = {
     sun: SunItem[];      // 多天的日出日落时间
 };
 //获取日出日落信息
-export const getSunData = (params: WeatherParams) => {
-    return request.get<ResType<SunData[]>>('/geo/sun.json', {
-        params,
-    });
-};
+export const getSunData = ({key, location, start = 0, days}: WeatherParams) => {
+        return request.get<ResType<SunData[]>>('/geo/sun.json', {
+            params: {
+                key,
+                location,
+                days,
+                start
+            }
+        });
+    }
+;
