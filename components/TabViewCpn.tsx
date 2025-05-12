@@ -1,4 +1,4 @@
-import * as React from 'react';
+
 import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import {TabView, TabBar} from 'react-native-tab-view';
 import LiveTab from "@/components/tabCpns/LiveTab";
@@ -7,14 +7,16 @@ import DailyTab from "@/components/tabCpns/DailyTab";
 import FifteenDaysTab from "@/components/tabCpns/FifteenDaysTab";
 import LifeIndexTab from "@/components/tabCpns/LifeIndexTab";
 import AirQualityTab from "@/components/tabCpns/AirQualityTab";
+import {useEffect, useRef, useState} from "react";
+import {useSelectedDateIndexStore} from "@/stores/useSelectedDateIndexStore";
 
 // 初始布局配置
 const initialLayout = {width: Dimensions.get('window').width};
 
 
 export default function TabViewCpn() {
-    const [index, setIndex] = React.useState(0);
-    const [routes] = React.useState([
+    const [index, setIndex] = useState(0);
+    const [routes] = useState([
         {key: 'live', title: '实况'},
         {key: 'hourly', title: '逐小时'},
         {key: 'daily', title: '单日'},
@@ -22,7 +24,21 @@ export default function TabViewCpn() {
         {key: 'lifeIndex', title: '生活指数'},
         {key: 'airQuality', title: '空气质量'},
     ]);
+    const { selectedDateIndex } = useSelectedDateIndexStore();
 
+    // ref 来记录上一次 index，避免无限循环
+    const prevSelectedDateIndexRef = useRef<number | null>(null);
+
+    useEffect(() => {
+        // 如果 selectedDateIndex 有效，并且当前不在 daily 页，才跳转
+        if (
+            selectedDateIndex !== prevSelectedDateIndexRef.current &&
+            index !== 2 // dailyTab 的 index 是 2
+        ) {
+            setIndex(2); // 切换到 DailyTab
+        }
+        prevSelectedDateIndexRef.current = selectedDateIndex;
+    }, [selectedDateIndex]);
     const renderScene = ({route}: { route: { key: string } }) => {
         switch (route.key) {
             case 'live':
