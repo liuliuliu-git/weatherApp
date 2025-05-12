@@ -5,8 +5,9 @@ import {useWeatherDaily} from "@/hooks/useWeatherDaily";
 import {useSunData} from "@/hooks/useSunData";
 import {Location} from "@/apis/shared";
 import {MaterialCommunityIcons, Ionicons, Feather} from '@expo/vector-icons';
-import Svg, {Polygon} from "react-native-svg";
+import Svg, { Polygon } from "react-native-svg";
 import {getWeatherIconUri} from "@/utils";
+import { useSelectedDateIndexStore } from "@/stores/useSelectedDateIndexStore";
 
 const DAY_NIGHT = ["白天", "夜间"];
 
@@ -14,9 +15,10 @@ export default function DailyTab() {
     const {location} = useLocationStore();
     const {weatherDaily} = useWeatherDaily(location as Location, 15, 0);
     const {sunData} = useSunData(location as Location, 15);
+    const { selectedDateIndex, setSelectedDateIndex } = useSelectedDateIndexStore();
 
     // 当前选中的日期索引
-    const [dateIndex, setDateIndex] = useState(0);
+    const dateIndex = selectedDateIndex;
     // 白天/夜间切换
     const [dayType, setDayType] = useState<0 | 1>(0);
 
@@ -76,8 +78,8 @@ export default function DailyTab() {
                 <View style={styles.headerRow}>
                     {/* 左箭头 */}
                     <TouchableOpacity
-                        disabled={dateIndex === 0}
-                        onPress={() => setDateIndex(i => Math.max(0, i - 1))}
+                        disabled={!weatherDaily || dateIndex === 0}
+                        onPress={() => setSelectedDateIndex(Math.max(0, dateIndex - 1))}
                         style={styles.arrowBtn}
                     >
                         <Svg width="18" height="18">
@@ -87,8 +89,8 @@ export default function DailyTab() {
                     <Text style={styles.dateText}>{dateStr}</Text>
                     {/* 右箭头 */}
                     <TouchableOpacity
-                        disabled={(weatherDaily && dateIndex === weatherDaily.length - 1) as boolean}
-                        onPress={() => setDateIndex(i => weatherDaily ? Math.min(weatherDaily.length - 1, i + 1) : i)}
+                        disabled={!weatherDaily || dateIndex === weatherDaily.length - 1}
+                        onPress={() => setSelectedDateIndex(weatherDaily ? Math.min(weatherDaily.length - 1, dateIndex + 1) : dateIndex)}
                         style={styles.arrowBtn}
                     >
                         <Svg width="18" height="18">
