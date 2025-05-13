@@ -1,5 +1,5 @@
 import {View, StyleSheet} from "react-native";
-import {useContext, useEffect} from "react";
+import {useContext} from "react";
 import {ThemeContext} from "@/context/ThemeContext";
 import TabViewCpn from "@/components/TabViewCpn";
 

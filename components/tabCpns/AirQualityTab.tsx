@@ -1,4 +1,3 @@
-import React, {useState, useMemo} from "react";
 import {View, Text, StyleSheet, TouchableOpacity, ScrollView} from "react-native";
 import {useLocationStore} from "@/stores/useLocationStore";
 import {useAirQuality} from "@/hooks/useAirQuality";
@@ -9,11 +8,9 @@ import {Location} from "@/apis/shared";
 import AQIProgressBar from "@/components/AQIProgressBar";
 import {Feather} from '@expo/vector-icons';
 import {BarChart} from "react-native-chart-kit";
-import {Dimensions} from "react-native";
 import {getAqiLevelInfo} from "@/utils";
-
-const screenWidth = Dimensions.get("window").width - 64;
-const chartLeftPadding = -9; // 让图表与卡片左侧对齐
+import {useRouter} from "expo-router";
+import {useMemo} from "react";
 
 export default function AirQualityTab() {
     const {location} = useLocationStore();
@@ -21,6 +18,7 @@ export default function AirQualityTab() {
     const {airForecastHourly} = useAirForecast24Hours(location as Location, 1);
     const {airForecastDaily} = useAirForecastDaily(location as Location, 5);
     const {airCity} = useAirCityRank(location as Location);
+    const router = useRouter();
 
     // 日期
     const dateStr = useMemo(() => {
@@ -68,7 +66,10 @@ export default function AirQualityTab() {
             <View style={styles.card}>
                 <View style={styles.headerRow}>
                     <Text style={styles.dateText}>{dateStr}</Text>
-                    <Text style={styles.areaText}>{area} <Feather name="chevron-right" size={16} color="#aaa"/></Text>
+                    <TouchableOpacity onPress={() => router.push("/search")}>
+                        <Text style={styles.areaText}>{area} <Feather name="chevron-right" size={16}
+                                                                      color="#aaa"/></Text>
+                    </TouchableOpacity>
                 </View>
                 <AQIProgressBar aqi={aqi}/>
                 <View style={styles.aqiRow}>
@@ -203,6 +204,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         marginBottom: 10,
+        justifyContent: "space-between",
     },
     dateText: {
         fontSize: 16,
@@ -301,6 +303,7 @@ const styles = StyleSheet.create({
         marginBottom: 6,
         marginTop: 2,
         paddingHorizontal: 2,
+        justifyContent: "space-between",
     },
     rankTitle: {
         fontSize: 16,

@@ -1,12 +1,13 @@
-import React, {useState, useCallback, useMemo} from "react";
-import {View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions} from "react-native";
+import {View, Text, StyleSheet, ScrollView, TouchableOpacity} from "react-native";
 import {useLocationStore} from "@/stores/useLocationStore";
 import {Location} from "@/apis/shared";
 import {useWeatherForecast24Hours} from "@/hooks/useWeatherForecast24Hours";
 import {useAirForecast24Hours} from "@/hooks/useAirForecast24Hours";
-import {MaterialCommunityIcons, Ionicons} from '@expo/vector-icons';
+import {MaterialCommunityIcons, Ionicons, Feather} from '@expo/vector-icons';
 import {getWindLevelBySpeed} from "@/utils/getWindLevel";
 import Svg, {Path, Circle} from 'react-native-svg';
+import {useRouter} from "expo-router";
+import {useCallback, useMemo, useState} from "react";
 
 const POINT_SPACING = 60; // 点之间的间距
 const CHART_HEIGHT = 120;
@@ -20,11 +21,12 @@ export default function HourlyTab() {
     const {weatherForecastHourly} = useWeatherForecast24Hours(location as Location);
     const {airForecastHourly} = useAirForecast24Hours(location as Location, 1);
     const [selectedIndex, setSelectedIndex] = useState(0);
+    const router = useRouter();
 
     const formatTime = useCallback((timeStr: string) => {
         const date = new Date(timeStr);
         const hours = date.getHours();
-        
+
         // 只在0点显示日期
         if (hours === 0) {
             return `${date.getDate()}日${hours}时`;
@@ -76,14 +78,18 @@ export default function HourlyTab() {
             <View style={styles.chartWrapper}>
                 <View style={styles.chartHeader}>
                     <Text style={styles.dateText}>{displayDate}</Text>
-                    <Text style={styles.locationText}>{location?.name} {'>'}</Text>
+                    <TouchableOpacity onPress={() => router.push('/search')}>
+                        <Text style={styles.locationText}>{location?.name} <Feather name="chevron-right" size={16}
+                                                                                    color="#aaa"/></Text>
+                    </TouchableOpacity>
+
                 </View>
-                <ScrollView 
-                    horizontal 
+                <ScrollView
+                    horizontal
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={styles.scrollContent}
                 >
-                    <View style={[styles.chartContainer, { width: chartWidth }]}>
+                    <View style={[styles.chartContainer, {width: chartWidth}]}>
                         <View style={styles.svgContainer}>
                             <Svg width={chartWidth} height={CHART_HEIGHT} style={styles.svg}>
                                 <Path
@@ -109,7 +115,7 @@ export default function HourlyTab() {
                                     key={index}
                                     style={[
                                         styles.timeItem,
-                                        { left: index * POINT_SPACING },
+                                        {left: index * POINT_SPACING},
                                         selectedIndex === index && styles.selectedTimeItem,
                                     ]}
                                     onPress={() => setSelectedIndex(index)}
@@ -219,7 +225,7 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         elevation: 2,
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: {width: 0, height: 2},
         shadowOpacity: 0.06,
         shadowRadius: 4,
     },
@@ -235,14 +241,14 @@ const styles = StyleSheet.create({
     },
     locationText: {
         fontSize: 14,
-        color: '#2196f3',
+        color: "#888",
     },
     scrollContent: {
         flexGrow: 1,
     },
     chartContainer: {
         height: CHART_HEIGHT + TIME_HEIGHT,
-        paddingHorizontal:0,
+        paddingHorizontal: 0,
     },
     svgContainer: {
         height: CHART_HEIGHT,
@@ -290,7 +296,7 @@ const styles = StyleSheet.create({
         padding: 16,
         elevation: 2,
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: {width: 0, height: 2},
         shadowOpacity: 0.06,
         shadowRadius: 4,
     },

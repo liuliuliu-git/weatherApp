@@ -7,7 +7,6 @@ import {
     Image,
     SectionList
 } from "react-native";
-
 import {ThemeContext} from "@/context/ThemeContext";
 import {useContext, useMemo} from "react";
 import {StatusBar} from "expo-status-bar";
@@ -35,7 +34,7 @@ import {
     getAlarmLevelIconStyle,
     getWeatherIconUri,
     getWeekday,
-    handleAxiosError, getAqiLevelInfo
+    getAqiLevelInfo
 } from '@/utils';
 import SunPathWebView from "@/components/SunPathWebView";
 import HourlyWeatherCpn from "@/components/HourlyWeatherCpn";
@@ -179,7 +178,9 @@ export default function Index() {
                                 <View style={styles.airQualityValue}>
                                     <Text style={styles.airQualityNumber}>空气质量指数</Text>
                                 </View>
-                                <TouchableOpacity style={styles.airQualityMore}>
+                                <TouchableOpacity style={styles.airQualityMore} onPress={() => {
+                                    router.push('/weatherDetail')
+                                }}>
                                     <Text style={styles.airQualityMoreText}>查看详情</Text>
                                 </TouchableOpacity>
                             </View>

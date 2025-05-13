@@ -1,11 +1,10 @@
-import React from "react";
 import {View, Text, StyleSheet, ScrollView, TouchableOpacity} from "react-native";
 import {useLocationStore} from "@/stores/useLocationStore";
 import {useWeatherFact} from "@/hooks/useWeatherFact";
 import {useAirQuality} from "@/hooks/useAirQuality";
 import {useWeatherDaily} from "@/hooks/useWeatherDaily";
 import {Location} from "@/apis/shared";
-import {MaterialCommunityIcons, Ionicons, FontAwesome5} from '@expo/vector-icons';
+import {MaterialCommunityIcons, Ionicons, FontAwesome5, Feather} from '@expo/vector-icons';
 import {getWeekday} from "@/utils/getWeekday";
 import {getWindLevelBySpeed} from "@/utils/getWindLevel";
 import Svg, {Polygon} from 'react-native-svg';
@@ -38,7 +37,7 @@ export default function LiveTab() {
                             <TouchableOpacity onPress={() => {
                                 router.push('/search')
                             }}>
-                                <Text style={styles.locationText}>{location?.name} {'>'}</Text>
+                                <Text style={styles.locationText}>{location?.name} <Feather name="chevron-right" size={16} color="#aaa"/></Text>
                             </TouchableOpacity>
 
                         </View>
@@ -58,7 +57,11 @@ export default function LiveTab() {
                         </View>
                         <View style={styles.extraInfo}>
                             <Text
-                                style={[styles.aqiText, {color: level?.color || '#4caf50'}]}>空气质量：{airQuality ? airQuality.quality : '--'}</Text>
+                                style={styles.aqiText}>空气质量：
+                                <Text style={{color: level?.color || '#4caf50'}}>
+                                    {airQuality ? airQuality.quality : '--'}
+                                </Text>
+                            </Text>
                             <Text style={styles.windText}>{getWindLevelBySpeed(now.wind_speed)}</Text>
                         </View>
                     </View>
@@ -107,7 +110,7 @@ const styles = StyleSheet.create({
         paddingBottom: 32,
         elevation: 2,
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: {width: 0, height: 2},
         shadowOpacity: 0.06,
         shadowRadius: 4,
     },
@@ -118,7 +121,7 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         elevation: 2,
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: {width: 0, height: 2},
         shadowOpacity: 0.06,
         shadowRadius: 4,
     },
@@ -133,7 +136,7 @@ const styles = StyleSheet.create({
         color: "#666",
     },
     locationText: {
-        fontSize: 16,
+        fontSize: 14,
         color: "#666",
     },
     mainInfo: {
@@ -155,12 +158,12 @@ const styles = StyleSheet.create({
     },
     tempRange: {
         fontSize: 16,
-        color: "#666",
+        color: "#888",
         marginHorizontal: 4,
     },
     weatherText: {
         fontSize: 20,
-        color: "#666",
+        color: "#888",
         marginTop: 8,
     },
     extraInfo: {
@@ -170,7 +173,7 @@ const styles = StyleSheet.create({
     },
     aqiText: {
         fontSize: 14,
-        color: "#4caf50",
+        color: '#888'
     },
     windText: {
         fontSize: 14,

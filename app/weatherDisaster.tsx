@@ -1,4 +1,3 @@
-import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {useLocationStore} from '@/stores/useLocationStore';
 import {useAlarmData} from "@/hooks/useAlarmData";

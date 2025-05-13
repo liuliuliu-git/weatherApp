@@ -1,4 +1,3 @@
-
 import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import {TabView, TabBar} from 'react-native-tab-view';
 import LiveTab from "@/components/tabCpns/LiveTab";

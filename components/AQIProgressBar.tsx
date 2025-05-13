@@ -1,18 +1,12 @@
 // AQIProgressBar.tsx
-import React, {useEffect, useRef} from 'react';
-import Svg, {Rect, Defs, LinearGradient, Stop, Line} from 'react-native-svg';
-import {View, Text, StyleSheet, Animated} from 'react-native';
-import {getAqiLevelInfo} from "@/utils";
-
-
-
-
+import Svg, {Rect, Defs, LinearGradient, Stop} from 'react-native-svg';
+import {View, StyleSheet, Animated} from 'react-native';
+import {useEffect, useRef} from "react";
 const AnimatedRect = Animated.createAnimatedComponent(Rect);
 const WIDTH = 300;
 const HEIGHT = 10;
 
 const AQIProgressBar = ({aqi}: { aqi: number }) => {
-    const level = getAqiLevelInfo(aqi);
     const aqiLineX = useRef(new Animated.Value(0)).current;
     useEffect(() => {
         const toValue = (aqi / 500) * WIDTH;

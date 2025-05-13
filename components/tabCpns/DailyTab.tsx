@@ -1,13 +1,15 @@
-import React, {useState, useMemo} from "react";
 import {View, Text, StyleSheet, TouchableOpacity, Image} from "react-native";
 import {useLocationStore} from "@/stores/useLocationStore";
 import {useWeatherDaily} from "@/hooks/useWeatherDaily";
 import {useSunData} from "@/hooks/useSunData";
 import {Location} from "@/apis/shared";
 import {MaterialCommunityIcons, Ionicons, Feather} from '@expo/vector-icons';
-import Svg, { Polygon } from "react-native-svg";
+import Svg, {Polygon} from "react-native-svg";
 import {getWeatherIconUri} from "@/utils";
-import { useSelectedDateIndexStore } from "@/stores/useSelectedDateIndexStore";
+import {useSelectedDateIndexStore} from "@/stores/useSelectedDateIndexStore";
+import {useRouter} from "expo-router";
+import {useMemo, useState} from "react";
+
 
 const DAY_NIGHT = ["白天", "夜间"];
 
@@ -15,8 +17,8 @@ export default function DailyTab() {
     const {location} = useLocationStore();
     const {weatherDaily} = useWeatherDaily(location as Location, 15, 0);
     const {sunData} = useSunData(location as Location, 15);
-    const { selectedDateIndex, setSelectedDateIndex } = useSelectedDateIndexStore();
-
+    const {selectedDateIndex, setSelectedDateIndex} = useSelectedDateIndexStore();
+    const router = useRouter();
     // 当前选中的日期索引
     const dateIndex = selectedDateIndex;
     // 白天/夜间切换
@@ -24,10 +26,9 @@ export default function DailyTab() {
 
     // 当前天气数据
     const todayWeather = useMemo(() => weatherDaily ? weatherDaily[dateIndex] : null, [weatherDaily, dateIndex]);
-    const todaySun  = useMemo(() => sunData ? sunData[dateIndex] : null, [sunData,dateIndex]);
+    const todaySun = useMemo(() => sunData ? sunData[dateIndex] : null, [sunData, dateIndex]);
     // 白天/夜间数据
     const weatherText = todayWeather ? (dayType === 0 ? todayWeather.text_day : todayWeather.text_night) : "--";
-    const weatherCode = todayWeather ? (dayType === 0 ? todayWeather.code_day : todayWeather.code_night) : "--";
     const tempLow = todayWeather ? todayWeather.low : "--";
     const tempHigh = todayWeather ? todayWeather.high : "--";
     const pop = todayWeather ? todayWeather.precip : "--";
@@ -48,11 +49,6 @@ export default function DailyTab() {
 
     // 天气图标
     const weatherIcon = (
-            // <MaterialCommunityIcons
-            //     name={dayType === 0 ? "weather-partly-cloudy" : "weather-night"}
-            //     size={40}
-            //     color="#4a90e2"
-            // />
             <View style={{backgroundColor: "#4a90e2"}}>
                 <Image
                     source={{uri: getWeatherIconUri(Number(dayType === 0 ? todayWeather?.code_day : todayWeather?.code_night), "light")}}
@@ -76,28 +72,34 @@ export default function DailyTab() {
             {/* 上方卡片 */}
             <View style={styles.card}>
                 <View style={styles.headerRow}>
-                    {/* 左箭头 */}
-                    <TouchableOpacity
-                        disabled={!weatherDaily || dateIndex === 0}
-                        onPress={() => setSelectedDateIndex(Math.max(0, dateIndex - 1))}
-                        style={styles.arrowBtn}
-                    >
-                        <Svg width="18" height="18">
-                            <Polygon points="12,3 6,9 12,15" fill={leftArrowColor}/>
-                        </Svg>
+                    <View style={{flexDirection: "row", alignItems: "center"}}>
+                        {/* 左箭头 */}
+                        <TouchableOpacity
+                            disabled={!weatherDaily || dateIndex === 0}
+                            onPress={() => setSelectedDateIndex(Math.max(0, dateIndex - 1))}
+                            style={styles.arrowBtn}
+                        >
+                            <Svg width="18" height="18">
+                                <Polygon points="12,3 6,9 12,15" fill={leftArrowColor}/>
+                            </Svg>
+                        </TouchableOpacity>
+                        <Text style={styles.dateText}>{dateStr}</Text>
+                        {/* 右箭头 */}
+                        <TouchableOpacity
+                            disabled={!weatherDaily || dateIndex === weatherDaily.length - 1}
+                            onPress={() => setSelectedDateIndex(weatherDaily ? Math.min(weatherDaily.length - 1, dateIndex + 1) : dateIndex)}
+                            style={styles.arrowBtn}
+                        >
+                            <Svg width="18" height="18">
+                                <Polygon points="6,3 12,9 6,15" fill={rightArrowColor}/>
+                            </Svg>
+                        </TouchableOpacity>
+                    </View>
+
+                    <TouchableOpacity onPress={() => router.push("/search")}>
+                        <Text style={styles.areaText}>{area} <Feather name="chevron-right" size={16}
+                                                                      color="#aaa"/></Text>
                     </TouchableOpacity>
-                    <Text style={styles.dateText}>{dateStr}</Text>
-                    {/* 右箭头 */}
-                    <TouchableOpacity
-                        disabled={!weatherDaily || dateIndex === weatherDaily.length - 1}
-                        onPress={() => setSelectedDateIndex(weatherDaily ? Math.min(weatherDaily.length - 1, dateIndex + 1) : dateIndex)}
-                        style={styles.arrowBtn}
-                    >
-                        <Svg width="18" height="18">
-                            <Polygon points="6,3 12,9 6,15" fill={rightArrowColor}/>
-                        </Svg>
-                    </TouchableOpacity>
-                    <Text style={styles.areaText}>{area} <Feather name="chevron-right" size={16} color="#aaa"/></Text>
                 </View>
                 {/* 白天/夜间切换 */}
                 <View style={styles.dayNightRow}>
@@ -180,6 +182,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         marginBottom: 10,
+        justifyContent: "space-between",
     },
     arrowBtn: {
         padding: 4,

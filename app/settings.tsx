@@ -1,6 +1,5 @@
-import {View, Text, Image, StyleSheet} from "react-native";
-import {useContext, useEffect, useState} from "react";
-import {StatusBar} from "expo-status-bar";
+import {View, Text, StyleSheet} from "react-native";
+import {useContext} from "react";
 import {ThemeContext} from "@/context/ThemeContext";
 import {ColorScheme, Theme} from "@/types";
 

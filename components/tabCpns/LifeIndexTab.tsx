@@ -1,4 +1,3 @@
-import React, {useEffect, useState} from "react";
 import {View, Text, StyleSheet, TouchableOpacity} from "react-native";
 import {useLocationStore} from "@/stores/useLocationStore";
 import {useLifeIndex} from "@/hooks/useLifeIndex";
@@ -6,6 +5,8 @@ import {Location} from "@/apis/shared";
 import {Feather, MaterialCommunityIcons, Ionicons} from '@expo/vector-icons';
 import Svg, {Polygon} from "react-native-svg";
 import {SuggestionItem} from "@/apis/life";
+import {useRouter} from "expo-router";
+import {useState} from "react";
 
 const LIFE_DETAIL_CONFIG = [
     {key: "airing", label: "晾晒", icon: <Feather name="sun" size={28} color="#4a90e2"/>},
@@ -30,6 +31,7 @@ export default function LifeIndexTab() {
     const {lifeIndex} = useLifeIndex(location as Location, 5);
     const lifeIndexLength = Array.isArray(lifeIndex) ? lifeIndex.length : 0;
     const todayLife = lifeIndex?.[dateIndex] as SuggestionItem;
+    const router = useRouter();
     // 箭头颜色
     const leftArrowColor = dateIndex === 0 ? "#ccc" : "#4a90e2";
     const rightArrowColor = dateIndex === lifeIndexLength - 1 ? "#ccc" : "#4a90e2";
@@ -56,28 +58,39 @@ export default function LifeIndexTab() {
             {/* 上方卡片 */}
             <View style={styles.card}>
                 <View style={styles.headerRow}>
-                    {/* 左箭头 */}
-                    <TouchableOpacity
-                        disabled={dateIndex === 0}
-                        onPress={() => setDateIndex(i => Math.max(0, i - 1))}
-                        style={styles.arrowBtn}
-                    >
-                        <Svg width="18" height="18">
-                            <Polygon points="12,3 6,9 12,15" fill={leftArrowColor}/>
-                        </Svg>
-                    </TouchableOpacity>
-                    <Text style={styles.dateText}>{dateStr}</Text>
-                    {/* 右箭头 */}
-                    <TouchableOpacity
-                        disabled={dateIndex === lifeIndexLength - 1}
-                        onPress={() => setDateIndex(i => Math.min(lifeIndexLength - 1, i + 1))}
-                        style={styles.arrowBtn}
-                    >
-                        <Svg width="18" height="18">
-                            <Polygon points="6,3 12,9 6,15" fill={rightArrowColor}/>
-                        </Svg>
-                    </TouchableOpacity>
-                    <Text style={styles.areaText}>{area} <Feather name="chevron-right" size={16} color="#aaa"/></Text>
+                    <View style={{flexDirection: "row"}}>
+                        {/* 左箭头 */}
+                        <TouchableOpacity
+                            disabled={dateIndex === 0}
+                            onPress={() => setDateIndex(i => Math.max(0, i - 1))}
+                            style={styles.arrowBtn}
+                        >
+                            <Svg width="18" height="18">
+                                <Polygon points="12,3 6,9 12,15" fill={leftArrowColor}/>
+                            </Svg>
+                        </TouchableOpacity>
+                        <Text style={styles.dateText}>{dateStr}</Text>
+                        {/* 右箭头 */}
+                        <TouchableOpacity
+                            disabled={dateIndex === lifeIndexLength - 1}
+                            onPress={() => setDateIndex(i => Math.min(lifeIndexLength - 1, i + 1))}
+                            style={styles.arrowBtn}
+                        >
+                            <Svg width="18" height="18">
+                                <Polygon points="6,3 12,9 6,15" fill={rightArrowColor}/>
+                            </Svg>
+                        </TouchableOpacity>
+                    </View>
+                    <View>
+                        <TouchableOpacity onPress={() => {
+                            router.push('/search')
+                        }}>
+                            <Text style={styles.areaText}>{area}<Feather name="chevron-right" size={16}
+                                                                         color="#aaa"/></Text>
+                        </TouchableOpacity>
+                    </View>
+
+
                 </View>
                 {/* 穿衣建议 */}
                 <View style={styles.briefRow}>
@@ -92,7 +105,7 @@ export default function LifeIndexTab() {
             <Text style={styles.lifeTitle}>生活详情</Text>
             <View style={styles.card}>
                 <View style={styles.grid}>
-                    {LIFE_DETAIL_CONFIG.map((item, idx) => (
+                    {LIFE_DETAIL_CONFIG.map((item) => (
                         <View style={styles.gridItem} key={item.key}>
                             {item.icon}
                             <Text style={styles.gridLabel}>{item.label}</Text>
@@ -122,6 +135,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         marginBottom: 10,
+        justifyContent: "space-between",
+
     },
     arrowBtn: {
         padding: 4,
