@@ -46,6 +46,8 @@ import {useLifeIndex} from "@/hooks/useLifeIndex";
 import {useAirQuality} from "@/hooks/useAirQuality";
 import {useWeatherForecast24Hours} from "@/hooks/useWeatherForecast24Hours";
 import {useAlarmData} from "@/hooks/useAlarmData";
+import Suggestion from "@/components/Suggestion";
+import {SuggestionItem} from "@/apis/life";
 
 export default function Index() {
     const {location} = useLocationStore();
@@ -202,97 +204,7 @@ export default function Index() {
                 );
             case 'suggestions':
                 return (
-                    <View style={styles.suggestionContainer}>
-                        <View style={styles.suggestionGrid}>
-                            {/* 晾晒 */}
-                            <View style={styles.suggestionItemWrapper}>
-                                <View style={styles.flatCard}>
-                                    <View style={[styles.suggestionIconContainer, styles.blueIconContainer]}>
-                                        <Ionicons name="shirt-outline" size={22} color="#FFFFFF"/>
-                                    </View>
-                                    <Text style={styles.suggestionText}>晾晒</Text>
-                                    <Text style={styles.suggestionDesc}>{lifeIndex?.[0]?.airing?.brief}</Text>
-                                </View>
-                            </View>
-
-                            {/* 过敏 */}
-                            <View style={styles.suggestionItemWrapper}>
-                                <View style={styles.flatCard}>
-                                    <View style={[styles.suggestionIconContainer, styles.purpleIconContainer]}>
-                                        <MaterialIcons name="healing" size={22} color="#FFFFFF"/>
-                                    </View>
-                                    <Text style={styles.suggestionText}>过敏</Text>
-                                    <Text style={styles.suggestionDesc}>{lifeIndex?.[0]?.allergy?.brief}</Text>
-                                </View>
-                            </View>
-
-                            {/* 旅游 */}
-                            <View style={styles.suggestionItemWrapper}>
-                                <View style={styles.flatCard}>
-                                    <View style={[styles.suggestionIconContainer, styles.tealIconContainer]}>
-                                        <MaterialCommunityIcons name="kite" size={24} color="#ffffff"/>
-                                    </View>
-                                    <Text style={styles.suggestionText}>放风筝</Text>
-                                    <Text style={styles.suggestionDesc}>{lifeIndex?.[0]?.kiteflying?.brief}</Text>
-                                </View>
-                            </View>
-
-                            {/* 运动 */}
-                            <View style={styles.suggestionItemWrapper}>
-                                <View style={styles.flatCard}>
-                                    <View style={[styles.suggestionIconContainer, styles.greenIconContainer]}>
-                                        <Ionicons name="fitness-outline" size={22} color="#FFFFFF"/>
-                                    </View>
-                                    <Text style={styles.suggestionText}>运动</Text>
-                                    <Text style={styles.suggestionDesc}>{lifeIndex?.[0]?.sport?.brief}</Text>
-                                </View>
-                            </View>
-
-                            {/* 钓鱼 */}
-                            <View style={styles.suggestionItemWrapper}>
-                                <View style={styles.flatCard}>
-                                    <View style={[styles.suggestionIconContainer, styles.orangeIconContainer]}>
-                                        <FontAwesome6 name="fish-fins" size={22} color="white"/>
-                                    </View>
-                                    <Text style={styles.suggestionText}>钓鱼</Text>
-                                    <Text style={styles.suggestionDesc}>{lifeIndex?.[0]?.fishing?.brief}</Text>
-                                </View>
-                            </View>
-
-                            {/* 洗车 */}
-                            <View style={styles.suggestionItemWrapper}>
-                                <View style={styles.flatCard}>
-                                    <View style={[styles.suggestionIconContainer, styles.blueGrayIconContainer]}>
-                                        <Ionicons name="car-outline" size={22} color="#FFFFFF"/>
-                                    </View>
-                                    <Text style={styles.suggestionText}>洗车</Text>
-                                    <Text style={styles.suggestionDesc}>{lifeIndex?.[0]?.car_washing?.brief}</Text>
-                                </View>
-                            </View>
-                            {/* 雨伞 */}
-                            <View style={styles.suggestionItemWrapper}>
-                                <View style={styles.flatCard}>
-                                    <View style={[styles.suggestionIconContainer, styles.indigoIconContainer]}>
-                                        <Ionicons name="umbrella-outline" size={22} color="#FFFFFF"/>
-                                    </View>
-                                    <Text style={styles.suggestionText}>雨伞</Text>
-                                    <Text style={styles.suggestionDesc}>{lifeIndex?.[0]?.umbrella?.brief}</Text>
-                                </View>
-                            </View>
-
-                            {/* 感冒 */}
-                            <View style={styles.suggestionItemWrapper}>
-                                <View style={styles.flatCard}>
-                                    <View style={[styles.suggestionIconContainer, styles.redIconContainer]}>
-                                        <Ionicons name="medical-outline" size={22} color="#FFFFFF"/>
-                                    </View>
-                                    <Text style={styles.suggestionText}>感冒</Text>
-
-                                    <Text style={styles.suggestionDesc}>{lifeIndex?.[0]?.flu?.brief}</Text>
-                                </View>
-                            </View>
-                        </View>
-                    </View>
+                    <Suggestion lifeIndex={lifeIndex as SuggestionItem[]} />
                 );
             default:
                 return null;
@@ -401,7 +313,6 @@ export default function Index() {
                     stickySectionHeadersEnabled={false}
                     showsVerticalScrollIndicator={false}
                 />
-
                 <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'}/>
             </ImageBackground>
         </SafeAreaView>

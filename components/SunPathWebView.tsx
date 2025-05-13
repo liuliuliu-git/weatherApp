@@ -118,7 +118,6 @@ export default function SunPathWebView({
                     style={{width, height, backgroundColor: 'transparent'}}
                     scrollEnabled={false}
                 />
-
             )}
             <View style={styles.labels}>
                 <View style={styles.labelItem}>
@@ -137,7 +136,16 @@ export default function SunPathWebView({
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
-        marginTop: 20,
+        marginTop: 10,
+        backgroundColor: '#fff',
+        borderRadius: 12,
+        marginHorizontal: 16, // 增加左右边距
+        elevation: 4,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 5,
+        paddingBottom:10
     },
     labels: {
         width: 220,

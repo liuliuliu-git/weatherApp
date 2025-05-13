@@ -155,7 +155,6 @@ export default function HourlyWeatherCpn({data}: HourlyWeatherProps) {
 
 const styles = StyleSheet.create({
     container: {
-        paddingVertical: 10,
     },
     row: {
         flexDirection: 'row',
