@@ -82,41 +82,61 @@ export default function Index() {
 
     // 创建一个渲染不同区块的函数
     const renderSections = () => {
-        const sections = [
-            {
+        const sections = [];
+
+        if (now) {
+            sections.push({
                 type: 'current',
-                data: [null] // 只需一个占位元素
-            },
-            {
+                data: [{ key: 'current' }], // Use a unique key for each item
+            });
+        }
+
+        if (weatherForecastHourly && weatherForecastHourly.length > 0) {
+            sections.push({
                 type: 'hourlyWeather',
-                data: [null]
-            },
-            {
+                data: [{ key: 'hourlyWeather' }],
+            });
+        }
+
+        if (weatherDaily && weatherDaily.length > 0) {
+            sections.push({
                 type: 'forecast',
-                data: weatherDaily || []
-            },
-            {
-                type: 'more',
-                data: [null]
-            },
-            {
+                data: weatherDaily.map((item, index) => ({ ...item, key: `forecast-${index}` })), // Ensure unique keys for each item
+            });
+        }
+
+        sections.push({
+            type: 'more',
+            data: [{ key: 'more' }],
+        });
+
+        if (sunData && sunData.length > 0) {
+            sections.push({
                 type: 'sun',
-                data: [null]
-            },
-            {
+                data: [{ key: 'sun' }],
+            });
+        }
+
+        if (aqi !== undefined) {
+            sections.push({
                 type: 'airQuality',
-                data: [null]
-            },
-            {
+                data: [{ key: 'airQuality' }],
+            });
+        }
+
+        if (lifeIndex && lifeIndex.length > 0) {
+            sections.push({
                 type: 'suggestions',
-                data: [null]
-            }
-        ];
+                data: [{ key: 'suggestions' }],
+            });
+        }
+
         return sections;
     };
 
+
     // 根据section类型渲染不同的区块
-    const renderSection = ({section}: { section: { type: string, data: any[] } }) => {
+    const renderItem = ({ item, section }: any) => {
         switch (section.type) {
             case 'current':
                 return (
@@ -133,15 +153,12 @@ export default function Index() {
                         </View>
                         <View style={styles.weatherTextContainer}>
                             <Text style={styles.currentWeatherText}>{now?.text}</Text>
-                            {/*最低温度到最高温度*/}
                             <View style={styles.tempRangeContainer}>
                                 <Text style={styles.tempRangeText}>{weatherDaily?.[0]?.low}</Text>
                                 <Text style={styles.tempRangeText}> ~ </Text>
                                 <Text style={styles.tempRangeText}>{weatherDaily?.[0]?.high}°C</Text>
                             </View>
                         </View>
-
-                        {/* 气象灾害预警信息 */}
                         {weatherAlarm && (
                             <TouchableOpacity
                                 style={[styles.weatherAlarmContainer, getAlarmLevelStyle(weatherAlarm.level)]}
@@ -154,23 +171,61 @@ export default function Index() {
                                 <Text style={styles.weatherAlarmText} numberOfLines={1} ellipsizeMode="tail">
                                     {weatherAlarm.type}{weatherAlarm.level}预警
                                 </Text>
-                                <Feather name="chevron-right" size={16} color="#fff" style={{marginTop: 3}}/>
+                                <Feather name="chevron-right" size={16} color="#fff" style={{ marginTop: 3 }} />
                             </TouchableOpacity>
                         )}
                     </View>
                 );
+
             case 'hourlyWeather':
-                return <HourlyWeatherCpn data={weatherForecastHourly as HourlyWeather[]}></HourlyWeatherCpn>
+                return <HourlyWeatherCpn data={weatherForecastHourly as HourlyWeather[]} />;
+
+            case 'forecast': {
+                const dateParts = item.date.split('-');
+                const month = dateParts[1];
+                const day = dateParts[2];
+                const rainProb = Math.round(parseFloat(item.precip) * 100);
+
+                return (
+                    <View style={styles.dailyWeatherItem}>
+                        <View style={styles.dateContainer}>
+                            <Text style={styles.dateText}>{`${month}/${day}`}</Text>
+                            <Text style={styles.weekdayText}>{getWeekday(item.date)}</Text>
+                        </View>
+                        <View style={styles.weatherIconContainer}>
+                            <Image
+                                source={{ uri: getWeatherIconUri(Number(item.code_day), "light") }}
+                                style={styles.weatherIcon}
+                            />
+                            {rainProb > 0 ? (
+                                <Text style={styles.rainProbability}>{rainProb}%</Text>
+                            ) : (
+                                <Text style={[styles.rainProbability, { opacity: 0 }]}>0%</Text>
+                            )}
+                        </View>
+                        <View style={styles.tempContainer}>
+                            <View style={styles.tempMinContainer}>
+                                <Text style={styles.tempMin}>{item.low}</Text>
+                            </View>
+                            <View style={styles.tempMaxContainer}>
+                                <Text style={styles.tempMax}>{item.high}</Text>
+                            </View>
+                        </View>
+                    </View>
+                );
+            }
+
             case 'more':
                 return (
                     <View style={styles.moreWeatherContainer}>
-                        <Text style={styles.moreWeather}
-                              onPress={() => router.push("/weatherDetail")}>查看更多天气 {">"}</Text>
+                        <Text style={styles.moreWeather} onPress={() => router.push("/weatherDetail")}>
+                            查看更多天气 {">"}
+                        </Text>
                     </View>
                 );
+
             case 'sun':
-                return <SunPathWebView sunrise={sunData?.[0]?.sunrise as string}
-                                       sunset={sunData?.[0]?.sunset as string}/>
+                return <SunPathWebView sunrise={sunData?.[0]?.sunrise as string} sunset={sunData?.[0]?.sunset as string} />;
 
             case 'airQuality':
                 return (
@@ -186,14 +241,13 @@ export default function Index() {
                                     <Text style={styles.airQualityMoreText}>查看详情</Text>
                                 </TouchableOpacity>
                             </View>
-
                             <View style={styles.airQualityProgressContainer}>
-                                <AQIProgressBar aqi={aqi}/>
+                                <AQIProgressBar aqi={aqi} />
                                 <View style={styles.airQualityRange}>
                                     <Text style={styles.airQualityRangeText}>AQI:{aqi}</Text>
-                                    <Text
-                                        style={styles.airQualityRangeText}>质量类别:
-                                        <Text style={{color: getAqiLevelInfo(aqi)?.color}}>
+                                    <Text style={styles.airQualityRangeText}>
+                                        质量类别:
+                                        <Text style={{ color: getAqiLevelInfo(aqi)?.color }}>
                                             {getAqiLevelInfo(aqi)?.label}
                                         </Text>
                                     </Text>
@@ -202,62 +256,15 @@ export default function Index() {
                         </View>
                     </View>
                 );
+
             case 'suggestions':
-                return (
-                    <Suggestion lifeIndex={lifeIndex as SuggestionItem[]} />
-                );
+                return <Suggestion lifeIndex={lifeIndex as SuggestionItem[]} />;
+
             default:
                 return null;
         }
     };
 
-    const renderItem = ({item, section}: { item: any, section: { type: string } }) => {
-        if (section.type === 'forecast') {
-            // 提取日期和月份
-            const dateParts = item.date.split('-');
-            const month = dateParts[1];
-            const day = dateParts[2];
-
-            // 降雨概率计算
-            const rainProb = Math.round(parseFloat(item.precip) * 100);
-
-            return (
-                <View style={styles.dailyWeatherItem}>
-                    {/* 日期和星期 */}
-                    <View style={styles.dateContainer}>
-                        <Text style={styles.dateText}>{`${month}/${day}`}</Text>
-                        <Text style={styles.weekdayText}>
-                            {getWeekday(item.date)}
-                        </Text>
-                    </View>
-
-                    {/* 天气图标和降雨概率固定宽度容器 */}
-                    <View style={styles.weatherIconContainer}>
-                        <Image
-                            source={{uri: getWeatherIconUri(Number(item.code_day), "light")}}
-                            style={styles.weatherIcon}
-                        />
-                        {rainProb > 0 ? (
-                            <Text style={styles.rainProbability}>{rainProb}%</Text>
-                        ) : (
-                            <Text style={[styles.rainProbability, {opacity: 0}]}>0%</Text>
-                        )}
-                    </View>
-
-                    {/* 温度 */}
-                    <View style={styles.tempContainer}>
-                        <View style={styles.tempMinContainer}>
-                            <Text style={styles.tempMin}>{item.low}</Text>
-                        </View>
-                        <View style={styles.tempMaxContainer}>
-                            <Text style={styles.tempMax}>{item.high}</Text>
-                        </View>
-                    </View>
-                </View>
-            );
-        }
-        return null;
-    };
 
     // 渲染预警图标
     const renderAlarmIcon = (alarmType: string) => {
@@ -303,13 +310,8 @@ export default function Index() {
 
                 <SectionList
                     sections={renderSections()}
-                    keyExtractor={(item, index) => {
-                        if (item === null) return `null-${index}`;
-                        if (typeof item === 'object' && 'date' in item) return item.date;
-                        return `item-${index}`;
-                    }}
                     renderItem={renderItem}
-                    renderSectionHeader={renderSection}
+                    keyExtractor={(item) => item.key}
                     stickySectionHeadersEnabled={false}
                     showsVerticalScrollIndicator={false}
                 />

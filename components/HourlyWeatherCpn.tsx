@@ -10,13 +10,15 @@ import {
 import Svg, {Path, Circle, Text as SvgText} from 'react-native-svg';
 import {formatTime} from '@/utils';
 import {HourlyWeather} from '@/apis/weather/weatherForecast24Hours';
-import {useRef, useState} from "react";
+import {useMemo, useRef, useState} from 'react';
+import {throttle} from 'lodash';
 
 type HourlyWeatherProps = {
     data: HourlyWeather[];
 };
 
 export default function HourlyWeatherCpn({data}: HourlyWeatherProps) {
+    if (!Array.isArray(data) || data.length === 0) return null;
     const [scrollX, setScrollX] = useState(0);
     const scrollViewRef = useRef<ScrollViewType>(null);
 
@@ -25,11 +27,10 @@ export default function HourlyWeatherCpn({data}: HourlyWeatherProps) {
     const padding = 20;
     const {width: screenWidth} = useWindowDimensions();
 
-    if (!data || !data.length) return null;
 
-    const temps = data.map(item => Number(item.temperature));
-    const maxTemp = Math.max(...temps);
-    const minTemp = Math.min(...temps);
+    const temps = useMemo(() => data?.map(item => Number(item.temperature)), [data]);
+    const maxTemp = useMemo(() => Math.max(...temps), [temps]);
+    const minTemp = useMemo(() => Math.min(...temps), [temps]);
 
     const getPoint = (i: number) => {
         const x = i * widthPerItem + widthPerItem / 2;
@@ -40,11 +41,10 @@ export default function HourlyWeatherCpn({data}: HourlyWeatherProps) {
         return {x, y};
     };
 
-    const points = data.map((_, i) => getPoint(i));
+    const points = useMemo(() => data?.map((_, i) => getPoint(i)), [data, maxTemp, minTemp]);
 
     const catmullRom2bezier = (points: { x: number; y: number }[]) => {
         if (points.length < 2) return '';
-
         let d = `M ${points[0].x} ${points[0].y} `;
         for (let i = 0; i < points.length - 1; i++) {
             const p0 = points[i - 1] || points[i];
@@ -62,12 +62,16 @@ export default function HourlyWeatherCpn({data}: HourlyWeatherProps) {
         return d;
     };
 
-    const bezierPath = catmullRom2bezier(points);
-    const totalWidth = data.length * widthPerItem;
+    const bezierPath = useMemo(() => catmullRom2bezier(points), [points]);
+    const totalWidth = useMemo(() => data.length * widthPerItem, [data]);
     const visibleWidth = screenWidth;
 
+    const throttledScrollHandler = useRef(
+        throttle((x: number) => setScrollX(x), 16)
+    ).current;
+
     const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-        setScrollX(e.nativeEvent.contentOffset.x);
+        throttledScrollHandler(e.nativeEvent.contentOffset.x);
     };
 
     const handleScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -79,73 +83,59 @@ export default function HourlyWeatherCpn({data}: HourlyWeatherProps) {
         setScrollX(targetX);
     };
 
-    const progress = Math.min(scrollX / (totalWidth - visibleWidth), 1);
-    const ballX = progress * (totalWidth - widthPerItem);
-    const indexFloat = ballX / widthPerItem;
-    const index = Math.floor(indexFloat);
-    const nextIndex = index + 1;
-    const ratio = indexFloat - index;
+    const ball = useMemo(() => {
+        const progress = Math.min(scrollX / (totalWidth - visibleWidth), 1);
+        const ballX = progress * (totalWidth - widthPerItem);
+        const indexFloat = ballX / widthPerItem;
+        const index = Math.floor(indexFloat);
+        const nextIndex = index + 1;
+        const ratio = indexFloat - index;
 
-    const getSafe = <T, >(arr: T[], i: number): T => arr[Math.max(0, Math.min(i, arr.length - 1))];
+        const getSafe = <T, >(arr: T[], i: number): T => arr[Math.max(0, Math.min(i, arr.length - 1))];
 
-    const p1 = getSafe(points, index);
-    const p2 = getSafe(points, nextIndex);
-    const d1 = getSafe(data, index);
-    const d2 = getSafe(data, nextIndex);
+        const p1 = getSafe(points, index);
+        const p2 = getSafe(points, nextIndex);
+        const d1 = getSafe(data, index);
+        const d2 = getSafe(data, nextIndex);
 
-    const y = p1.y + (p2.y - p1.y) * ratio;
-    const temperature = Number(d1.temperature) + (Number(d2.temperature) - Number(d1.temperature)) * ratio;
+        const y = p1.y + (p2.y - p1.y) * ratio;
+        const temperature = Number(d1.temperature) + (Number(d2.temperature) - Number(d1.temperature)) * ratio;
 
+        return {
+            x: ballX + widthPerItem / 2,
+            y,
+            temp: temperature.toFixed(0),
+            time: formatTime(d1.time),
+            text: d1.text,
+        };
+    }, [scrollX, totalWidth, visibleWidth, data, points]);
+    if (!data || !data.length) return null;
     return (
         <ScrollView
             ref={scrollViewRef}
             horizontal
             showsHorizontalScrollIndicator={false}
             style={styles.container}
-            scrollEventThrottle={16}
             decelerationRate="fast"
             snapToInterval={widthPerItem}
             snapToAlignment="start"
+            scrollEventThrottle={16}
             onScroll={handleScroll}
             onMomentumScrollEnd={handleScrollEnd}
-            contentContainerStyle={{
-                paddingHorizontal: 10,
-                width: totalWidth + 20,
-            }}
+            contentContainerStyle={{paddingHorizontal: 10, width: totalWidth + 20}}
         >
             <View style={{width: totalWidth}}>
                 <Svg height={chartHeight + 60} width={totalWidth} style={{marginBottom: 10}}>
                     <Path d={bezierPath} fill="none" stroke="#4fc3f7" strokeWidth={2}/>
-                    <SvgText
-                        x={ballX + widthPerItem / 2}
-                        y={y - 14}
-                        fontSize="13"
-                        fill="#fff"
-                        fontWeight="bold"
-                        textAnchor="middle"
-                    >
-                        {formatTime(d1.time)}
+                    <SvgText x={ball.x} y={ball.y - 14} fontSize="13" fill="#fff" fontWeight="bold" textAnchor="middle">
+                        {ball.time}
                     </SvgText>
-
-                    <Circle cx={ballX + widthPerItem / 2} cy={y} r={10} fill="#4fc3f7"/>
-                    <SvgText
-                        x={ballX + widthPerItem / 2}
-                        y={y + 24}
-                        fontSize="12"
-                        fill="#fff"
-                        textAnchor="middle"
-                    >
-                        {d1.text}
+                    <Circle cx={ball.x} cy={ball.y} r={10} fill="#4fc3f7"/>
+                    <SvgText x={ball.x} y={ball.y + 24} fontSize="12" fill="#fff" textAnchor="middle">
+                        {ball.text}
                     </SvgText>
-                    <SvgText
-                        x={ballX + widthPerItem / 2}
-                        y={y + 4}
-                        fontSize="10"
-                        fill="#fff"
-                        fontWeight="bold"
-                        textAnchor="middle"
-                    >
-                        {temperature.toFixed(0)}
+                    <SvgText x={ball.x} y={ball.y + 4} fontSize="10" fill="#fff" fontWeight="bold" textAnchor="middle">
+                        {ball.temp}
                     </SvgText>
                 </Svg>
             </View>
@@ -154,8 +144,7 @@ export default function HourlyWeatherCpn({data}: HourlyWeatherProps) {
 }
 
 const styles = StyleSheet.create({
-    container: {
-    },
+    container: {},
     row: {
         flexDirection: 'row',
     },
