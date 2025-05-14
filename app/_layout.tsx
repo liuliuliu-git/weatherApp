@@ -37,7 +37,25 @@ export default function RootLayout() {
                 }}/>
                 {/* 设置页 */}
                 <Stack.Screen name="settings" options={{
-                    title: "设置", headerTitleAlign: 'center', // 标题居中
+                    title: "设置",
+                    headerTitleAlign: 'center',
+                    headerShadowVisible: false,
+                    animation: 'slide_from_right', // 添加平滑过渡动画
+                    headerStyle: {
+                        borderBottomWidth: 0,
+                        elevation: 0,
+                        shadowOpacity: 0,
+                        backgroundColor: '#fff',
+                    },
+                    headerTitleStyle: { // 固定标题样式避免闪烁
+                        fontSize: 18,
+                        fontWeight: '500',
+                        color: '#333'
+                    }
+                }}/>
+                {/* 气象灾害页 */}
+                <Stack.Screen name="weatherDisaster" options={{
+                    title: "气象灾害", headerTitleAlign: 'center', // 标题居中
                     headerShadowVisible: false, // 去除底部横线（React Navigation v6+）
                     // 如果 headerShadowVisible 不起作用，可以使用下方 headerStyle.borderBottomWidth
                     headerStyle: {
@@ -47,9 +65,9 @@ export default function RootLayout() {
                         backgroundColor: '#fff', // 可选：设置背景颜色
                     },
                 }}/>
-                {/* 气象灾害页 */}
-                <Stack.Screen name="weatherDisaster" options={{
-                    title: "气象灾害", headerTitleAlign: 'center', // 标题居中
+                {/* 全国城市aqi排行 */}
+                <Stack.Screen name="weatherDetail/AirRankList" options={{
+                    title: "天气详情", headerTitleAlign: 'center', // 标题居中
                     headerShadowVisible: false, // 去除底部横线（React Navigation v6+）
                     // 如果 headerShadowVisible 不起作用，可以使用下方 headerStyle.borderBottomWidth
                     headerStyle: {
