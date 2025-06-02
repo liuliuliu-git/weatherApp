@@ -12,7 +12,7 @@ const AQIProgressBar = ({aqi}: { aqi: number }) => {
         const toValue = (aqi / 500) * WIDTH;
         Animated.timing(aqiLineX, {
             toValue,
-            delay: 700,
+            delay: 200,
             duration: 2000, // 动画持续时间
             useNativeDriver: true,
         }).start();

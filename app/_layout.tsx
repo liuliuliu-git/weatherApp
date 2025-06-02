@@ -65,8 +65,81 @@ export default function RootLayout() {
                         backgroundColor: '#fff', // 可选：设置背景颜色
                     },
                 }}/>
-                {/* 全国城市aqi排行 */}
-                <Stack.Screen name="weatherDetail/AirRankList" options={{
+                {/*天气详情路由*/}
+                {/* 实况天气 */}
+                <Stack.Screen name="weatherDetail/live" options={{
+                    title: "天气详情", headerTitleAlign: 'center', // 标题居中
+                    headerShadowVisible: false, // 去除底部横线（React Navigation v6+）
+                    // 如果 headerShadowVisible 不起作用，可以使用下方 headerStyle.borderBottomWidth
+                    headerStyle: {
+                        borderBottomWidth: 0, // 某些平台（如 Android）可能更需要这个
+                        elevation: 0,         // Android 移除阴影
+                        shadowOpacity: 0,     // iOS 移除阴影
+                        backgroundColor: '#fff', // 可选：设置背景颜色
+                    },
+                }}/>
+                {/* 生活指数 */}
+                <Stack.Screen name="weatherDetail/lifeIndex" options={{
+                    title: "天气详情", headerTitleAlign: 'center', // 标题居中
+                    headerShadowVisible: false, // 去除底部横线（React Navigation v6+）
+                    // 如果 headerShadowVisible 不起作用，可以使用下方 headerStyle.borderBottomWidth
+                    headerStyle: {
+                        borderBottomWidth: 0, // 某些平台（如 Android）可能更需要这个
+                        elevation: 0,         // Android 移除阴影
+                        shadowOpacity: 0,     // iOS 移除阴影
+                        backgroundColor: '#fff', // 可选：设置背景颜色
+                    },
+                }}/>
+                {/* 天气aqi排行 */}
+                <Stack.Screen name="weatherDetail/airRankList" options={{
+                    title: "天气详情", headerTitleAlign: 'center', // 标题居中
+                    headerShadowVisible: false, // 去除底部横线（React Navigation v6+）
+                    // 如果 headerShadowVisible 不起作用，可以使用下方 headerStyle.borderBottomWidth
+                    headerStyle: {
+                        borderBottomWidth: 0, // 某些平台（如 Android）可能更需要这个
+                        elevation: 0,         // Android 移除阴影
+                        shadowOpacity: 0,     // iOS 移除阴影
+                        backgroundColor: '#fff', // 可选：设置背景颜色
+                    },
+                }}/>
+                {/* 每小时 */}
+                <Stack.Screen name="weatherDetail/hourly" options={{
+                    title: "天气详情", headerTitleAlign: 'center', // 标题居中
+                    headerShadowVisible: false, // 去除底部横线（React Navigation v6+）
+                    // 如果 headerShadowVisible 不起作用，可以使用下方 headerStyle.borderBottomWidth
+                    headerStyle: {
+                        borderBottomWidth: 0, // 某些平台（如 Android）可能更需要这个
+                        elevation: 0,         // Android 移除阴影
+                        shadowOpacity: 0,     // iOS 移除阴影
+                        backgroundColor: '#fff', // 可选：设置背景颜色
+                    },
+                }}/>
+                {/* 单日 */}
+                <Stack.Screen name="weatherDetail/daily" options={{
+                    title: "天气详情", headerTitleAlign: 'center', // 标题居中
+                    headerShadowVisible: false, // 去除底部横线（React Navigation v6+）
+                    // 如果 headerShadowVisible 不起作用，可以使用下方 headerStyle.borderBottomWidth
+                    headerStyle: {
+                        borderBottomWidth: 0, // 某些平台（如 Android）可能更需要这个
+                        elevation: 0,         // Android 移除阴影
+                        shadowOpacity: 0,     // iOS 移除阴影
+                        backgroundColor: '#fff', // 可选：设置背景颜色
+                    },
+                }}/>
+                {/* 十五日 */}
+                <Stack.Screen name="weatherDetail/fifteenDays" options={{
+                    title: "天气详情", headerTitleAlign: 'center', // 标题居中
+                    headerShadowVisible: false, // 去除底部横线（React Navigation v6+）
+                    // 如果 headerShadowVisible 不起作用，可以使用下方 headerStyle.borderBottomWidth
+                    headerStyle: {
+                        borderBottomWidth: 0, // 某些平台（如 Android）可能更需要这个
+                        elevation: 0,         // Android 移除阴影
+                        shadowOpacity: 0,     // iOS 移除阴影
+                        backgroundColor: '#fff', // 可选：设置背景颜色
+                    },
+                }}/>
+                {/* 空气质量 */}
+                <Stack.Screen name="weatherDetail/airQuality" options={{
                     title: "天气详情", headerTitleAlign: 'center', // 标题居中
                     headerShadowVisible: false, // 去除底部横线（React Navigation v6+）
                     // 如果 headerShadowVisible 不起作用，可以使用下方 headerStyle.borderBottomWidth

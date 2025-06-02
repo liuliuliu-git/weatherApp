@@ -15,7 +15,7 @@ export default function FifteenDaysTab() {
 
     const handleItemPress = (index: number) => {
         setSelectedDateIndex(index);
-        router.push("/weatherDetail"); // 切换到详情页（TabViewCpn）
+        router.push("/weatherDetail/daily"); // 跳转到 daily 子页面
     };
 
     return (
