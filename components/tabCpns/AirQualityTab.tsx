@@ -87,7 +87,7 @@ export default function AirQualityTab() {
             {/* 城市排行 */}
             <View style={styles.rankHeaderRow}>
                 <Text style={styles.rankTitle}>全国排行</Text>
-                <TouchableOpacity onPress={()=>router.push('/weatherDetail/AirRankList')}>
+                <TouchableOpacity onPress={()=>router.push('/weatherDetail/airRankList')}>
                     <Text style={styles.rankMore}>更多 <Feather name="chevron-right" size={14} color="#888"/></Text>
                 </TouchableOpacity>
             </View>

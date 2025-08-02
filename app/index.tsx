@@ -16,7 +16,7 @@ import {
     Entypo,
     Feather,
     Ionicons,
-    MaterialCommunityIcons, FontAwesome6
+    MaterialCommunityIcons
 } from '@expo/vector-icons';
 import {useRouter} from "expo-router";
 import {Inter_500Medium, useFonts} from "@expo-google-fonts/inter";
@@ -301,7 +301,7 @@ export default function Index() {
                         <TouchableOpacity onPress={() => {
                             router.push("/settings");
                         }} style={{marginTop: 5}}>
-                            <Feather name="more-vertical" size={28} color={theme.text}/>
+                            {/*<Feather name="more-vertical" size={28} color={theme.text}/>*/}
                         </TouchableOpacity>
                     </View>
                     <View style={styles.headerLine}>

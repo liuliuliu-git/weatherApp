@@ -1,14 +1,15 @@
 import {View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet} from "react-native";
 import {useEffect, useState} from "react";
-import {searchCity, LocationSearchItem} from "@/apis/citySearch";
+import {searchCity} from "@/apis/citySearch";
 import {useLocationStore} from "@/stores/useLocationStore";
 import {useRouter} from "expo-router";
+import {Location} from "@/apis/shared";
 
 
 export default function Search() {
     const {setLocation} = useLocationStore();
     const [query, setQuery] = useState(""); // 输入框内容
-    const [results, setResults] = useState<LocationSearchItem[]>([]); // 搜索结果
+    const [results, setResults] = useState<Location[]>([]); // 搜索结果
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
@@ -52,13 +53,13 @@ export default function Search() {
         }
     };
 
-    const handleSelect = (item: LocationSearchItem) => {
+    const handleSelect = (item: Location) => {
         setLocation(item);
         // console.log("你选择了城市：", item);
         router.replace('/')
 
     };
-    const renderItem = (item: LocationSearchItem) => {
+    const renderItem = (item: Location) => {
         return <TouchableOpacity style={styles.item} onPress={() => handleSelect(item)}>
             <Text style={styles.cityName}>{item.path}</Text>
             <Text style={styles.timezone}>{item.timezone_offset} {item.timezone}</Text>

@@ -1,25 +1,23 @@
-import {View, Text, StyleSheet, TouchableOpacity, ScrollView, FlatList} from "react-native";
+import {View, Text, StyleSheet, TouchableOpacity, FlatList, RefreshControl} from "react-native";
 import {useAirCityRank} from "@/hooks/useAirCityRank";
 import {useLocationStore} from "@/stores/useLocationStore";
 import {getAqiLevelInfo} from "@/utils";
 import React, {useState, useMemo, useCallback} from "react";
-import {Location} from "@/apis/shared";
 import {AirQualityCityRankItem} from "@/apis/air/airQualityCityRank";
+import {Location} from "@/apis/shared";
 
 export default function AirRankList() {
     const {location} = useLocationStore();
-    const {airCity} = useAirCityRank(location as Location);
+    const { airCity, loadMore, refresh, refreshing } = useAirCityRank(location as Location);
     // tab: 0-从优到差，1-从差到优
     const [tab, setTab] = useState(0);
 
     // 排序后的数据
+    const cnList = useMemo(() => airCity?.filter(item => item.location?.country === 'CN') ?? [], [airCity]);
     const sortedList = useMemo(() => {
-        // console.log(airCity?.[0])
-        if (!airCity) return [];
-        const cnList = airCity.filter(item => item.location?.country === 'CN');
-        const sorted = [...cnList].sort((a, b) => tab === 0 ? Number(a.aqi) - Number(b.aqi) : Number(b.aqi) - Number(a.aqi));
-        return sorted;
-    }, [airCity, tab]);
+        return [...cnList].sort((a, b) => tab === 0 ? Number(a.aqi) - Number(b.aqi) : Number(b.aqi) - Number(a.aqi));
+    }, [cnList, tab]);
+
     const RowItem = React.memo(({item, index}: { item: AirQualityCityRankItem, index: number }) => {
         const path = item.location?.path || "";
         const parts = path.split(",");
@@ -71,7 +69,7 @@ export default function AirRankList() {
             </View>
             <FlatList
                 data={sortedList}
-                keyExtractor={item => item.location.id}
+                keyExtractor={item => item.location.id.toString()}
                 renderItem={renderItem}
                 initialNumToRender={20}
                 windowSize={10}
@@ -81,6 +79,11 @@ export default function AirRankList() {
                     offset: 56 * index,
                     index,
                 })}
+                onEndReached={loadMore}
+                onEndReachedThreshold={0.2}
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={refresh} />
+                }
             />
 
         </View>
@@ -139,4 +142,4 @@ const styles = StyleSheet.create({
         color: "#222",
         overflow: "hidden",
     },
-}); 
+});
