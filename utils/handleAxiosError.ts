@@ -26,9 +26,9 @@ export const handleAxiosError = (error: unknown) => {
                 Toast.show({
                     type: 'error',
                     text1: '禁止访问',
-                    text2: '您没有权限访问此资源',
+                    text2: 'API密钥无效或已过期，请检查配置',
                     position: "top",
-                    visibilityTime: 1500
+                    visibilityTime: 2000
                 });
                 break;
             case 404:

@@ -4,6 +4,7 @@ import {searchCity} from "@/apis/citySearch";
 import {useLocationStore} from "@/stores/useLocationStore";
 import {useRouter} from "expo-router";
 import {Location} from "@/apis/shared";
+import {handleAxiosError} from "@/utils";
 
 
 export default function Search() {
@@ -36,9 +37,14 @@ export default function Search() {
 
     const fetchCityResults = async () => {
         try {
+            const apiKey = process.env.EXPO_PUBLIC_API_KEY || '';
+            if (!apiKey) {
+                console.error("API密钥未配置，请在环境变量中设置 EXPO_PUBLIC_API_KEY");
+                return;
+            }
             setLoading(true);
             const {data} = await searchCity({
-                key: process.env.EXPO_PUBLIC_API_KEY || '',
+                key: apiKey,
                 location: query,
             });
             let resFilter = data.results.filter((item) => {
@@ -48,6 +54,7 @@ export default function Search() {
             setResults(resFilter || []);
         } catch (e) {
             console.error("城市搜索失败：", e);
+            handleAxiosError(e);
         } finally {
             setLoading(false);
         }

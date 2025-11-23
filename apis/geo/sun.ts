@@ -1,6 +1,5 @@
 import {request} from '@/utils/request';
 import {ResType, Location, WeatherParams} from "@/apis/shared";
-import {start} from "node:repl";
 
 //单条日出日落记录
 export type SunItem = {
