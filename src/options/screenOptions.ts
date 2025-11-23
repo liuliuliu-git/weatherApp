@@ -1,4 +1,6 @@
-export default function screenOptions() {
+import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
+
+export default function screenOptions(): NativeStackNavigationOptions {
     return {
         title: '', // 默认标题为空
         headerTitleAlign: 'center', // 安卓标题栏居中
