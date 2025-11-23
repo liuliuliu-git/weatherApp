@@ -1,4 +1,4 @@
-import WeatherDetailTabs from "./index";
+import WeatherDetailTabs from "./WeatherDetailTabs";
 import LiveTab from "@/components/tabCpns/LiveTab";
 
 export default function LivePage() {

@@ -1,4 +1,4 @@
-import WeatherDetailTabs from "./index";
+import WeatherDetailTabs from "./WeatherDetailTabs";
 import LifeIndexTab from "@/components/tabCpns/LifeIndexTab";
 
 export default function LifeIndexPage() {

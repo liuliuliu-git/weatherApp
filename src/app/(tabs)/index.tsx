@@ -74,7 +74,11 @@ export default function Index() {
     }, [airQuality]);
 
     if (!loaded && !error) {
-        return null
+        return (
+            <SafeAreaView style={[styles.container, {justifyContent: 'center', alignItems: 'center'}]}>
+                <Text style={{color: Colors.light.text}}>加载中...</Text>
+            </SafeAreaView>
+        )
     }
 
     // 创建一个渲染不同区块的函数
@@ -287,19 +291,9 @@ export default function Index() {
                 {/* Header */}
                 <View style={styles.headerContainer}>
                     <View style={styles.headerMain}>
-                        <TouchableOpacity onPress={() => {
-                            router.push("/search")
-                        }} style={{marginTop: 5}}>
-                            <FontAwesome5 name="search-location" size={24} color={Colors.light.text}/>
-                        </TouchableOpacity>
                         <Text style={styles.cityText}>{location?.name}
                             <Entypo name="location" size={24} color={Colors.light.text} style={styles.locationIcon}/>
                         </Text>
-                        <TouchableOpacity onPress={() => {
-                            router.push("/settings");
-                        }} style={{marginTop: 5}}>
-                            {/*<Feather name="more-vertical" size={28} color={theme.text}/>*/}
-                        </TouchableOpacity>
                     </View>
                     <View style={styles.headerLine}>
                     </View>
@@ -340,7 +334,7 @@ function createStyles(theme: typeof Colors.light) {
         headerMain: {
             flexDirection: 'row',
             marginBottom: 10,
-            justifyContent: 'space-between',
+            justifyContent: 'center',
             width: '100%',
         },
         headerLine: {

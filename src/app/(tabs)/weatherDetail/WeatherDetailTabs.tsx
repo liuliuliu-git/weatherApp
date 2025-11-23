@@ -12,31 +12,29 @@ const tabs = [
 ];
 type TabKey = "live" | "hourly" | "daily" | "fifteenDays" | "lifeIndex" | "airQuality";
 
-const getRoutePath = (key: TabKey): `/weatherDetail/${TabKey}` => {
-    return `/weatherDetail/${key}` as const;
-};
 export default function WeatherDetailTabs() {
     const router = useRouter();
     const segments = useSegments();
-    const current = segments[1] || "live";
+    // 获取当前路由名称，从 segments 中提取
+    // 如果当前在 index 页面，则显示 live 为激活状态
+    let currentRoute = segments[segments.length - 1] || "live";
+    if (currentRoute === "index" || currentRoute === "weatherDetail") {
+        currentRoute = "live";
+    }
+    const current = currentRoute as TabKey;
 
-    // 自动重定向到 live
-    useEffect(() => {
-        // 只在正好是 /weatherDetail 时重定向
-        // @ts-ignore
-        if (segments.length === 1 && segments[0] === "weatherDetail") {
-            router.replace(getRoutePath("live"));
-        }
-    }, [segments]);
+    const handleTabPress = (key: TabKey) => {
+        // 使用相对路径导航
+        router.push(`./${key}`);
+    };
 
     return (
-
         <View style={styles.tabBar}>
             {tabs.map(tab => (
                 <TouchableOpacity
                     key={tab.key}
                     style={[styles.tab, current === tab.key && styles.activeTab]}
-                    onPress={() => router.replace(`/weatherDetail/${tab.key as TabKey}`)}
+                    onPress={() => handleTabPress(tab.key as TabKey)}
                 >
                     <Text style={current === tab.key ? styles.activeText : styles.text}>
                         {tab.title}
@@ -44,7 +42,6 @@ export default function WeatherDetailTabs() {
                 </TouchableOpacity>
             ))}
         </View>
-
     );
 }
 
@@ -72,6 +69,6 @@ const styles = StyleSheet.create({
         color: "#4a90e2",
         fontWeight: "bold",
         fontSize: 15,
-
     },
-}); 
+});
+

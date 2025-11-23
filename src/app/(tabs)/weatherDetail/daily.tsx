@@ -1,4 +1,4 @@
-import WeatherDetailTabs from "./index";
+import WeatherDetailTabs from "./WeatherDetailTabs";
 import DailyTab from "@/components/tabCpns/DailyTab";
 
 export default function DailyPage() {
