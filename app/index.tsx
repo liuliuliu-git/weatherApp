@@ -7,8 +7,7 @@ import {
     Image,
     SectionList
 } from "react-native";
-import {ThemeContext} from "@/context/ThemeContext";
-import {useContext, useMemo} from "react";
+import {useMemo} from "react";
 import {StatusBar} from "expo-status-bar";
 import {
     FontAwesome5,
@@ -20,10 +19,9 @@ import {
 } from '@expo/vector-icons';
 import {useRouter} from "expo-router";
 import {Inter_500Medium, useFonts} from "@expo-google-fonts/inter";
-import {ColorScheme, Theme} from "@/types";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {useLocationStore} from "@/stores/useLocationStore";
-import {grayColor, alarmColors} from "@/constants/Colors";
+import {Colors, grayColor, alarmColors} from "@/constants/Colors";
 import AQIProgressBar from "@/components/AQIProgressBar";
 import {
     HourlyWeather,
@@ -51,8 +49,7 @@ import {SuggestionItem} from "@/apis/life";
 
 export default function Index() {
     const {location} = useLocationStore();
-    const {colorScheme, theme} = useContext(ThemeContext);
-    const styles = createStyles(theme, colorScheme);
+    const styles = createStyles(Colors.light);
     //地点天气
     const {now} = useWeatherFact(location as Location);
     //逐日天气预报以及昨日天气
@@ -315,13 +312,13 @@ export default function Index() {
                     stickySectionHeadersEnabled={false}
                     showsVerticalScrollIndicator={false}
                 />
-                <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'}/>
+                <StatusBar style="dark"/>
             </ImageBackground>
         </SafeAreaView>
     );
 }
 
-function createStyles(theme: Theme, colorScheme: ColorScheme) {
+function createStyles(theme: typeof Colors.light) {
     return StyleSheet.create({
         container: {
             flex: 1,

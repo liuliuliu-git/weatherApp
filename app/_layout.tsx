@@ -1,12 +1,11 @@
 import {Stack} from "expo-router";
 import {SafeAreaProvider} from "react-native-safe-area-context";
-import {ThemeProvider} from "@/context/ThemeContext";
 import {StatusBar} from "expo-status-bar";
 import Toast from "react-native-toast-message";
+import {ViewStyle} from "react-native";
 
 export default function RootLayout() {
-    return <ThemeProvider>
-        <SafeAreaProvider>
+    return <SafeAreaProvider>
             <StatusBar style="auto"/>
             <Stack>
                 {/* 首页 */}
@@ -21,7 +20,7 @@ export default function RootLayout() {
                         elevation: 0,         // Android 移除阴影
                         shadowOpacity: 0,     // iOS 移除阴影
                         backgroundColor: '#fff', // 可选：设置背景颜色
-                    },
+                    } as any,
                 }}/>
                 {/* 搜索页 */}
                 <Stack.Screen name="search" options={{
@@ -33,7 +32,7 @@ export default function RootLayout() {
                         elevation: 0,         // Android 移除阴影
                         shadowOpacity: 0,     // iOS 移除阴影
                         backgroundColor: '#fff', // 可选：设置背景颜色
-                    },
+                    } as any,
                 }}/>
                 {/* 设置页 */}
                 <Stack.Screen name="settings" options={{
@@ -46,7 +45,7 @@ export default function RootLayout() {
                         elevation: 0,
                         shadowOpacity: 0,
                         backgroundColor: '#fff',
-                    },
+                    } as any,
                     headerTitleStyle: { // 固定标题样式避免闪烁
                         fontSize: 18,
                         fontWeight: '500',
@@ -63,7 +62,7 @@ export default function RootLayout() {
                         elevation: 0,         // Android 移除阴影
                         shadowOpacity: 0,     // iOS 移除阴影
                         backgroundColor: '#fff', // 可选：设置背景颜色
-                    },
+                    } as any,
                 }}/>
                 {/*天气详情路由*/}
                 {/* 实况天气 */}
@@ -76,7 +75,7 @@ export default function RootLayout() {
                         elevation: 0,         // Android 移除阴影
                         shadowOpacity: 0,     // iOS 移除阴影
                         backgroundColor: '#fff', // 可选：设置背景颜色
-                    },
+                    } as any,
                 }}/>
                 {/* 生活指数 */}
                 <Stack.Screen name="weatherDetail/lifeIndex" options={{
@@ -88,7 +87,7 @@ export default function RootLayout() {
                         elevation: 0,         // Android 移除阴影
                         shadowOpacity: 0,     // iOS 移除阴影
                         backgroundColor: '#fff', // 可选：设置背景颜色
-                    },
+                    } as any,
                 }}/>
                 {/* 天气aqi排行 */}
                 <Stack.Screen name="weatherDetail/airRankList" options={{
@@ -100,7 +99,7 @@ export default function RootLayout() {
                         elevation: 0,         // Android 移除阴影
                         shadowOpacity: 0,     // iOS 移除阴影
                         backgroundColor: '#fff', // 可选：设置背景颜色
-                    },
+                    } as any,
                 }}/>
                 {/* 每小时 */}
                 <Stack.Screen name="weatherDetail/hourly" options={{
@@ -112,7 +111,7 @@ export default function RootLayout() {
                         elevation: 0,         // Android 移除阴影
                         shadowOpacity: 0,     // iOS 移除阴影
                         backgroundColor: '#fff', // 可选：设置背景颜色
-                    },
+                    } as any,
                 }}/>
                 {/* 单日 */}
                 <Stack.Screen name="weatherDetail/daily" options={{
@@ -124,7 +123,7 @@ export default function RootLayout() {
                         elevation: 0,         // Android 移除阴影
                         shadowOpacity: 0,     // iOS 移除阴影
                         backgroundColor: '#fff', // 可选：设置背景颜色
-                    },
+                    } as any,
                 }}/>
                 {/* 十五日 */}
                 <Stack.Screen name="weatherDetail/fifteenDays" options={{
@@ -136,7 +135,7 @@ export default function RootLayout() {
                         elevation: 0,         // Android 移除阴影
                         shadowOpacity: 0,     // iOS 移除阴影
                         backgroundColor: '#fff', // 可选：设置背景颜色
-                    },
+                    } as any,
                 }}/>
                 {/* 空气质量 */}
                 <Stack.Screen name="weatherDetail/airQuality" options={{
@@ -148,12 +147,9 @@ export default function RootLayout() {
                         elevation: 0,         // Android 移除阴影
                         shadowOpacity: 0,     // iOS 移除阴影
                         backgroundColor: '#fff', // 可选：设置背景颜色
-                    },
+                    } as any,
                 }}/>
             </Stack>
             <Toast/>
         </SafeAreaProvider>
-    </ThemeProvider>
-
-
 }
