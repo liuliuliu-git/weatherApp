@@ -290,10 +290,10 @@ export default function Index() {
                         <TouchableOpacity onPress={() => {
                             router.push("/search")
                         }} style={{marginTop: 5}}>
-                            <FontAwesome5 name="search-location" size={24} color={theme.text}/>
+                            <FontAwesome5 name="search-location" size={24} color={Colors.light.text}/>
                         </TouchableOpacity>
                         <Text style={styles.cityText}>{location?.name}
-                            <Entypo name="location" size={24} color={theme.text} style={styles.locationIcon}/>
+                            <Entypo name="location" size={24} color={Colors.light.text} style={styles.locationIcon}/>
                         </Text>
                         <TouchableOpacity onPress={() => {
                             router.push("/settings");
