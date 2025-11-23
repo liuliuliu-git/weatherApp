@@ -3,9 +3,10 @@
   "compilerOptions": {
     "types": ["node"],
     "strict": true,
+    "jsx": "react-native",
     "paths": {
       "@/*": [
-        "./*"
+        "./src/*"
       ]
     }
   },

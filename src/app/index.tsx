@@ -283,7 +283,7 @@ export default function Index() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ImageBackground blurRadius={50} style={styles.image} source={require("../assets/images/img.png")}>
+            <ImageBackground blurRadius={50} style={styles.image} source={require("@/assets/images/img.png")}>
                 {/* Header */}
                 <View style={styles.headerContainer}>
                     <View style={styles.headerMain}>

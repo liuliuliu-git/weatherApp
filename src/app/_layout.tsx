@@ -2,9 +2,8 @@ import {Stack} from "expo-router";
 import {SafeAreaProvider} from "react-native-safe-area-context";
 import {StatusBar} from "expo-status-bar";
 import Toast from "react-native-toast-message";
-import {ViewStyle} from "react-native";
 
-export default function RootLayout() {
+export default function Layout() {
     return <SafeAreaProvider>
             <StatusBar style="auto"/>
             <Stack>
